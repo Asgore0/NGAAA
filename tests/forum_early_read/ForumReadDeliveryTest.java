@@ -18,6 +18,15 @@ public final class ForumReadDeliveryTest {
     private static void check(boolean value,String message){checks++;if(!value)throw new AssertionError(message);}
     private static void await(CountDownLatch signal,String message)throws Exception{check(signal.await(3,TimeUnit.SECONDS),message);}
     private static void waitFor(CountDownLatch signal){try{if(!signal.await(5,TimeUnit.SECONDS))throw new IllegalStateException("Fixture wait timed out");}catch(InterruptedException cancelled){Thread.currentThread().interrupt();}}
+    // Model a socket that needs disconnect(), not an interruptible latch that exits first and
+    // unregisters the request before the asynchronous disconnect worker can inspect it.
+    private static void waitForSocketRelease(CountDownLatch signal){
+        boolean interrupted=false;long end=System.nanoTime()+TimeUnit.SECONDS.toNanos(5);
+        try{while(signal.getCount()!=0){long remaining=end-System.nanoTime();if(remaining<=0)throw new IllegalStateException("Fixture socket wait timed out");
+            try{if(!signal.await(remaining,TimeUnit.NANOSECONDS))throw new IllegalStateException("Fixture socket wait timed out");}
+            catch(InterruptedException cancelled){interrupted=true;}
+        }}finally{if(interrupted)Thread.currentThread().interrupt();}
+    }
     private static void cleared(ForumReadDelivery<?> value)throws Exception{
         for(String name:new String[]{"value","receiver"}){Field field=ForumReadDelivery.class.getDeclaredField(name);field.setAccessible(true);check(field.get(value)==null,"handoff releases "+name);}
     }
@@ -58,7 +67,7 @@ public final class ForumReadDeliveryTest {
         try{delivery.bind(work->{throw new AssertionError("normal completion must retain original read worker");},value->{
                 RequestCancellation.Registration registration=null;
                 try{registration=RequestCancellation.track(connection);
-                    entered.countDown();waitFor(release);
+                    entered.countDown();waitForSocketRelease(release);
                 }catch(Throwable problem){failure.set(problem);}finally{if(registration!=null)registration.close();done.countDown();}
             });
             reads.execute(()->delivery.complete("page"));await(entered,"receiver runs inside real cancellation scope");reads.cancelAll();delivery.cancel();
