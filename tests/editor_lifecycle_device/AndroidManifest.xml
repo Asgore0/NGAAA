@@ -1,0 +1,7 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="cn.ngapure.editorfixturev195">
+ <uses-sdk android:minSdkVersion="26" android:targetSdkVersion="35" />
+ <application android:theme="@android:style/Theme.Material.Light.NoActionBar" android:label="NGA isolated editor lifecycle" android:allowBackup="false" android:usesCleartextTraffic="false">
+  <activity android:name="cn.ngapure.editorfixturev195.EditorFixtureActivity" android:exported="false" />
+ </application>
+ <instrumentation android:name="cn.ngapure.editorfixturev195.EditorLifecycleProbe" android:targetPackage="cn.ngapure.editorfixturev195" android:label="Own UID fake HTTPS editor lifecycle" />
+</manifest>

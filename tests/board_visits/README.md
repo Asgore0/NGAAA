@@ -1,0 +1,9 @@
+# Scoped recently opened boards
+
+Run `bash tests/board_visits/run.sh`. The suite compiles the real production `BoardVisits`, `ForumRoute` and `AvatarSources` with the cached Android API 35 and checksum-pinned test JSON dependency. It downloads nothing and performs no network, emulator or account operations. Preferences are a synthetic host fixture that models Android updating its live map before a synchronous disk commit, including commit failures and rollback failures.
+
+Checks cover canonical ordinary/negative forum IDs and collection IDs, optional ordinary-parent backlinks, distinct forum/collection identities, immutable snapshots, successful reconstruction, per-scope 30-entry recency, six-scope eviction, independent host/account digests, explicit scoped clear, wall-clock rollback, and maximum bounded metadata. Public artwork is normalized through the existing official-host-only `AvatarSources` policy; an invalid optional icon becomes the empty fallback.
+
+Malformed, oversized, over-nested, duplicate or noncanonical stored documents throw without rewriting the original bytes. Unavailable reads also prevent writes and clears. Failed saves, failed clears, a first failed save and a failed seventh-scope eviction restore the old live state, so a later unrelated preference flush cannot persist a visit whose commit failed. A gated two-instance case verifies that the shared lock keeps a successful following writer outside the first writer's rollback.
+
+`BoardVisits` owns only the new `nga_native_board_visits` preference file and `visits_v1` index. The caller supplies its current 64-hex local-data scope, opts into history and records only after a board response succeeds. This store does not infer successful navigation, reuse unscoped topic history, send requests or read credentials. Host passing does not establish Android UI behavior or actual on-device disk-failure behavior.

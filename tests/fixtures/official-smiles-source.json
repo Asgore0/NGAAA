@@ -1,0 +1,48 @@
+{
+  "scope": "Public official name/file protocol facts only. No image bytes or implementation copied.",
+  "core": {
+    "url": "https://img4.nga.cn/common_res/js_bbscode_core.js?1342409",
+    "sha256": "90ef6ebbf7bbc688610ff132beaf1893d07bcdbdfd52fa801f1dea1f906d13de"
+  },
+  "style": {
+    "url": "https://img4.nga.cn/ngabbs/nga_classic/js_bbscode_smiles.js?2966394",
+    "sha256": "2cf2475b999293e86badf4c4afd2675a732c3cdbe6b5eadd0284bf8e4f8b469f",
+    "overridesSmilesTable": false
+  },
+  "imageBase": "https://img4.nga.cn/ngabbs/post/smile/",
+  "groupSizes": {
+    "0": 27,
+    "ac": 45,
+    "a2": 46
+  },
+  "sampledImages": [
+    {
+      "key": "ac:goodjob",
+      "file": "ac1.png",
+      "http": 200,
+      "width": 69,
+      "height": 60,
+      "bytes": 3451,
+      "sha256": "402a688fa8ab3daf76f50ca58b86f8159ea8473020d0398958796e8615cf30af"
+    },
+    {
+      "key": "ac:哭笑",
+      "file": "ac15.png",
+      "http": 200,
+      "width": 69,
+      "height": 60,
+      "bytes": 3406,
+      "sha256": "028a210064071c576c3a0840f658201074506c78f85c49db404ffa31a1234015"
+    },
+    {
+      "key": "ac:茶",
+      "file": "ac39.png",
+      "http": 200,
+      "width": 69,
+      "height": 60,
+      "bytes": 3062,
+      "sha256": "d1f59a19e601f41f13d161d0152a6d660fbaf2a7721bddd72be272d296e815af"
+    }
+  ],
+  "unknownExample": "ac:good is not defined and remains literal UBB"
+}

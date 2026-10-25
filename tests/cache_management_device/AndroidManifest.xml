@@ -1,0 +1,8 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="cn.ngapure.cacheprobe">
+  <uses-sdk android:minSdkVersion="26" android:targetSdkVersion="35" />
+  <queries><package android:name="cn.ngapure.app" /></queries>
+  <application android:label="NGA disposable cache isolated fixture" android:allowBackup="false" android:usesCleartextTraffic="false" android:theme="@android:style/Theme.Material.Light.NoActionBar">
+    <activity android:name="cn.ngapure.cacheprobe.CacheHostActivity" android:exported="false" />
+  </application>
+  <instrumentation android:name="cn.ngapure.cacheprobe.CacheManagementProbe" android:targetPackage="cn.ngapure.cacheprobe" android:label="Own UID no Internet actual Android cache management" />
+</manifest>

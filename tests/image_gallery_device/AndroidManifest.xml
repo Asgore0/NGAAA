@@ -1,0 +1,7 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="cn.ngapure.galleryprobe">
+    <uses-sdk android:minSdkVersion="26" android:targetSdkVersion="35" />
+    <application android:allowBackup="false" android:debuggable="true" android:label="NGAAA gallery fixture" android:theme="@android:style/Theme.Material.Light.NoActionBar">
+        <activity android:name="cn.ngapure.galleryprobe.ImageGalleryProbe$FixtureActivity" android:exported="false" android:resizeableActivity="true" />
+    </application>
+    <instrumentation android:name="cn.ngapure.galleryprobe.ImageGalleryProbe" android:targetPackage="cn.ngapure.galleryprobe" />
+</manifest>

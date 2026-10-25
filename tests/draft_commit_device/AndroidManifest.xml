@@ -1,0 +1,6 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="cn.ngapure.draftfixturev196">
+ <uses-sdk android:minSdkVersion="26" android:targetSdkVersion="35" />
+ <application android:label="NGA isolated draft commit test" android:allowBackup="false" android:usesCleartextTraffic="false" />
+ <instrumentation android:name="cn.ngapure.draftfixturev196.DraftCommitProbe" android:targetPackage="cn.ngapure.draftfixturev196" android:label="Own UID real preferences disk failure" />
+ <instrumentation android:name="cn.ngapure.draftfixturev196.InterruptedCommitProbe" android:targetPackage="cn.ngapure.draftfixturev196" android:label="Own UID real preferences interrupted commit" />
+</manifest>

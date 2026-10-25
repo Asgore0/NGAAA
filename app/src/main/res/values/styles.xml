@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AppTheme" parent="android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:fontFamily">sans</item>
+        <item name="android:colorControlNormal">#62685E</item>
+        <item name="android:colorControlHighlight">#207B714F</item>
+        <item name="android:colorAccent">#7B5F31</item>
+        <item name="android:dialogTheme">@style/AppDialogLight</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:statusBarColor">#F5F4EF</item>
+        <item name="android:navigationBarColor">#F5F4EF</item>
+        <item name="android:windowActionModeOverlay">true</item>
+        <item name="android:windowBackground">#F5F4EF</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+    <style name="AppThemeDark" parent="AppTheme">
+        <item name="android:colorAccent">#D2BB88</item>
+        <item name="android:colorControlNormal">#B0B3A9</item>
+        <item name="android:colorControlHighlight">#28D2BB88</item>
+        <item name="android:dialogTheme">@style/AppDialogDark</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:statusBarColor">#171917</item>
+        <item name="android:navigationBarColor">#171917</item>
+        <item name="android:windowBackground">#171917</item>
+    </style>
+    <style name="AppDialogLight" parent="android:style/Theme.Material.Light.Dialog.Alert">
+        <item name="android:colorAccent">#7B5F31</item>
+        <item name="android:colorBackground">#FFFEFA</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+    </style>
+    <style name="AppDialogDark" parent="android:style/Theme.Material.Dialog.Alert">
+        <item name="android:colorAccent">#D2BB88</item>
+        <item name="android:colorBackground">#232622</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+    </style>
+</resources>

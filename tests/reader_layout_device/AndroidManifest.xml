@@ -1,0 +1,8 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="cn.ngapure.readerlayoutprobe">
+    <uses-sdk android:minSdkVersion="26" android:targetSdkVersion="35" />
+    <queries><package android:name="cn.ngapure.app" /></queries>
+    <application android:allowBackup="false" android:debuggable="true" android:label="NGAAA reader layout fixture" android:theme="@android:style/Theme.Material.Light.NoActionBar">
+        <activity android:name="cn.ngapure.readerlayoutprobe.ReaderLayoutProbe$FixtureActivity" android:exported="false" android:resizeableActivity="true" />
+    </application>
+    <instrumentation android:name="cn.ngapure.readerlayoutprobe.ReaderLayoutProbe" android:targetPackage="cn.ngapure.readerlayoutprobe" />
+</manifest>

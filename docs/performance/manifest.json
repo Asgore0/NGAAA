@@ -1,0 +1,12 @@
+{
+  "schema": 1,
+  "comparisons": {
+    "candidate-1.json": "c0476580e14d100af9174cfe3e39b6c5891b1d004137af0205d63ef6752b3e5d",
+    "candidate-2.json": "808d40fa9086d70fd66fd58a20ade918d41ef3564acd5eb7ba35dcb878344b8f",
+    "candidate-4.json": "7add386483a2722e2182d269346041e37894344a7de622adc71292009233db0f",
+    "candidate-5.json": "d6259c94013effa3eab23f77fa050838f35fb0d5d9a8ecdd60d77d2aecf8448a",
+    "candidate-6.json": "105bd0b631f4ec13edad3a74d71e97419e42f92c1716432cf1ff7eb8348f68c6",
+    "candidate-7.json": "1e0c71aa77e6eb9f7cc1abe6b76073eccdfaec04a58eefebca8c7a2f41cddbb2",
+    "candidate-8.json": "ce3e2808dba29a23bc067549e79c1d61211d06f338052e39b125ff4a08b1d649"
+  }
+}

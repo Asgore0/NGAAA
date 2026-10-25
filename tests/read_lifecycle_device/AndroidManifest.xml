@@ -1,0 +1,7 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="cn.ngapure.readcancelfixturev194">
+    <uses-sdk android:minSdkVersion="26" android:targetSdkVersion="35" />
+    <application android:theme="@android:style/Theme.Material.Light.NoActionBar" android:label="NGA isolated read cancellation" android:allowBackup="false" android:usesCleartextTraffic="false">
+        <activity android:name="cn.ngapure.readcancelfixturev194.ReadFixtureActivity" android:exported="false" />
+    </application>
+    <instrumentation android:name="cn.ngapure.readcancelfixturev194.ReadLifecycleProbe" android:targetPackage="cn.ngapure.readcancelfixturev194" android:label="Own UID fake HTTPS community lifecycle" />
+</manifest>

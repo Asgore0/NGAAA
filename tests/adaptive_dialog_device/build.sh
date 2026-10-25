@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+set -euo pipefail
+BASE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT="$(cd "$BASE/../.." && pwd)"
+: "${PRODUCT_JAR:?Set PRODUCT_JAR to the immutable production classes.jar}"
+: "${PRODUCT_APK:?Set PRODUCT_APK to the matching immutable production APK}"
+: "${PRODUCT_JAR_SHA256:?Set the independently recorded production jar SHA256}"
+: "${PRODUCT_APK_SHA256:?Set the independently recorded production APK SHA256}"
+: "${SIGNING_DIR:?Set SIGNING_DIR to the private signing directory}"
+: "${BUILD_DIR:?Set BUILD_DIR to an absolute fresh isolated helper build directory}"
+JDK="${JAVA_HOME:-/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home}"
+export JAVA_HOME="$JDK"
+export PATH="$JDK/bin:$PATH"
+SDK="${ANDROID_SDK_ROOT:-/opt/homebrew/share/android-commandlinetools}"
+BT="$SDK/build-tools/35.0.0"
+ANDROID="$SDK/platforms/android-35/android.jar"
+BUILD="$BUILD_DIR"
+[[ "$BUILD" == /* && "$BUILD" != / && "$BUILD" != "$PROJECT" ]] || { echo 'Fresh absolute isolated helper directory required' >&2; exit 1; }
+python3 - "$PRODUCT_JAR" "$PRODUCT_APK" "$PRODUCT_JAR_SHA256" "$PRODUCT_APK_SHA256" "$BUILD" <<'PY'
+import hashlib,pathlib,sys
+for raw,expected in [(sys.argv[1],sys.argv[3]),(sys.argv[2],sys.argv[4])]:
+    if hashlib.sha256(pathlib.Path(raw).read_bytes()).hexdigest()!=expected:raise SystemExit('Explicit immutable production hash mismatch')
+build=pathlib.Path(sys.argv[5]);build.mkdir(parents=True,exist_ok=True)
+if any(build.iterdir()):raise SystemExit('Fresh isolated directory required; refusing stale helper classes')
+PY
+mkdir -p "$BUILD/classes" "$BUILD/dex" "$BUILD/assets"
+cp "$PRODUCT_JAR" "$BUILD/production.jar"
+"$JDK/bin/javac" --release 8 -Xlint:all -Werror -encoding UTF-8 -cp "$ANDROID:$BUILD/production.jar" -d "$BUILD/classes" "$BASE/AdaptiveDialogProbe.java"
+"$JDK/bin/jar" cf "$BUILD/helper.jar" -C "$BUILD/classes" .
+python3 - "$BASE" "$BUILD" "$PRODUCT_APK" <<'PY'
+import hashlib,json,pathlib,sys,zipfile
+base,build,apk=map(pathlib.Path,sys.argv[1:]);sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+with zipfile.ZipFile(build/'production.jar') as jar:
+    classes={n:hashlib.sha256(jar.read(n)).hexdigest() for n in jar.namelist() if n.endswith('.class')}
+for required in ['NativePageJumpDialog','NativeLoginView','NativeCredentialLoginView','NativeEditorView','NativeImageGalleryView','NativeImages','NativeDrafts','NgaStore','FoldAdaptiveLayout']:
+    if 'cn/ngapure/app/'+required+'.class' not in classes:raise SystemExit('Missing final product preview class: '+required)
+with zipfile.ZipFile(build/'helper.jar') as helper:
+    if set(classes).intersection(helper.namelist()):raise SystemExit('Helper shadows production class')
+report={'productApkSha256':sha(apk),'productJarSha256':sha(build/'production.jar'),'productionClassSha256':classes,'productionClassesRewritten':False,'helperOwnUid':True,'internetPermission':False,'realClientStarted':False,'syntheticOnly':True,'uiAutomationScreenshots':True,'realComponentMeasuredTextGeometry':True,'inProcessImageTransportOnly':True,'publicInstalledApplicationIconReadOnly':True,'sourceSha256':{p.name:sha(p) for p in base.iterdir() if p.is_file()},'localActivityDensityOverride':160,'localActivityFontScaleOverride':'runner-explicit-1-through-2','measuredWidthsDp':'runner-explicit-160-through-1000','mode':'EXACT_FULL_PRODUCT_JAR'}
+(build/'assets/binding.json').write_text(json.dumps(report,sort_keys=True)+'\n');(build/'binding.json').write_text(json.dumps(report,indent=2)+'\n')
+PY
+"$BT/d8" --release --min-api 26 --lib "$ANDROID" --output "$BUILD/dex" "$BUILD/production.jar" "$BUILD/helper.jar"
+"$BT/aapt2" link -I "$ANDROID" --manifest "$BASE/AndroidManifest.xml" -A "$BUILD/assets" -o "$BUILD/unaligned.apk"
+python3 - "$BUILD" <<'PY'
+import pathlib,sys,zipfile
+build=pathlib.Path(sys.argv[1])
+with zipfile.ZipFile(build/'unaligned.apk','a',compression=zipfile.ZIP_DEFLATED) as archive:
+    for p in (build/'dex').glob('classes*.dex'):archive.write(p,p.name)
+PY
+"$BT/zipalign" -f 4 "$BUILD/unaligned.apk" "$BUILD/adaptive-dialog-probe.apk"
+"$BT/apksigner" sign --ks "$SIGNING_DIR/ngapure-debug.keystore" --ks-key-alias ngapure-debug --ks-pass pass:android --key-pass pass:android "$BUILD/adaptive-dialog-probe.apk"
+"$BT/apksigner" verify "$BUILD/adaptive-dialog-probe.apk"
+"$BT/aapt2" dump permissions "$BUILD/adaptive-dialog-probe.apk" > "$BUILD/permissions.txt"
+if rg -q 'android.permission.INTERNET|sharedUserId' "$BASE/AndroidManifest.xml" "$BUILD/permissions.txt"; then echo 'No INTERNET or shared UID permitted' >&2; exit 1; fi
+printf '%s\n' "$BUILD/adaptive-dialog-probe.apk"

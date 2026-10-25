@@ -1,0 +1,7 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="cn.ngapure.authfixturev195">
+ <uses-sdk android:minSdkVersion="26" android:targetSdkVersion="35" />
+ <application android:theme="@android:style/Theme.Material.Light.NoActionBar" android:label="NGA isolated login lifecycle" android:allowBackup="false" android:usesCleartextTraffic="false">
+  <activity android:name="cn.ngapure.authfixturev195.AuthFixtureActivity" android:exported="false" />
+ </application>
+ <instrumentation android:name="cn.ngapure.authfixturev195.AuthLifecycleProbe" android:targetPackage="cn.ngapure.authfixturev195" android:label="Own UID fake HTTPS login lifecycle" />
+</manifest>

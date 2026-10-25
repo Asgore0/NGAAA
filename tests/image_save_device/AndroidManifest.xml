@@ -1,0 +1,8 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="cn.ngapure.imagesavefixturev195">
+ <uses-sdk android:minSdkVersion="26" android:targetSdkVersion="35" />
+ <application android:theme="@android:style/Theme.Material.Light.NoActionBar" android:label="NGA isolated image save lifecycle" android:allowBackup="false" android:usesCleartextTraffic="false">
+  <activity android:name="cn.ngapure.app.MainActivity" android:exported="false" />
+  <provider android:name="cn.ngapure.imagesavefixturev195.ImageSaveProvider" android:authorities="cn.ngapure.imagesavefixturev195.sink" android:exported="false" />
+ </application>
+ <instrumentation android:name="cn.ngapure.imagesavefixturev195.ImageSaveProbe" android:targetPackage="cn.ngapure.imagesavefixturev195" android:label="Own UID local pipe provider image save lifecycle" />
+</manifest>

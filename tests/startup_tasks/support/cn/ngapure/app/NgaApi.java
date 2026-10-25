@@ -1,0 +1,2 @@
+package cn.ngapure.app;import android.content.Context;import java.util.ArrayList;import java.util.List;
+public final class NgaApi {static final List<NgaStore.CheckInSession> attempts=new ArrayList<>();public NgaApi(Context context){}public void checkIn(String source,NgaStore.CheckInSession expected){NgaStore.CheckInSession actual=NgaStore.current;if(expected!=null&&(!expected.host.equals(actual.host)||!expected.cookie.equals(actual.cookie)||!expected.account.equals(actual.account)))return;synchronized(attempts){attempts.add(expected==null?actual:expected);}}}

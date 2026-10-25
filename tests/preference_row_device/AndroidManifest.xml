@@ -1,0 +1,7 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="cn.ngapure.preferencerowprobe">
+ <uses-sdk android:minSdkVersion="26" android:targetSdkVersion="35" />
+ <application android:allowBackup="false" android:debuggable="true" android:supportsRtl="true" android:label="NGAAA preference row fixture" android:theme="@android:style/Theme.Material.Light.NoActionBar">
+  <activity android:name="cn.ngapure.preferencerowprobe.PreferenceRowProbe$FixtureActivity" android:exported="false" android:resizeableActivity="true" />
+ </application>
+ <instrumentation android:name="cn.ngapure.preferencerowprobe.PreferenceRowProbe" android:targetPackage="cn.ngapure.preferencerowprobe" />
+</manifest>

@@ -1,0 +1,8 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="cn.ngapure.anchorprobe">
+  <uses-sdk android:minSdkVersion="28" android:targetSdkVersion="35" />
+  <queries><package android:name="cn.ngapure.app" /></queries>
+  <application android:label="NGA isolated multi post anchor probe" android:theme="@android:style/Theme.Material.Light.NoActionBar" android:allowBackup="false" android:debuggable="true" android:usesCleartextTraffic="false">
+    <activity android:name="cn.ngapure.anchorprobe.AnchorHostActivity" android:exported="false" />
+  </application>
+  <instrumentation android:name="cn.ngapure.anchorprobe.MultiPostAnchorProbe" android:targetPackage="cn.ngapure.anchorprobe" android:label="Own UID no Internet exact native multi post read anchor" />
+</manifest>

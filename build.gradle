@@ -1,0 +1,5 @@
+plugins {
+    // Conventional IDE build: Android Gradle Plugin 8.7.3, Gradle 8.9, JDK 17.
+    // build-local.sh uses installed Android SDK tools and needs no Gradle plugin.
+    id 'com.android.application' version '8.7.3' apply false
+}

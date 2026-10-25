@@ -1,0 +1,8 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="cn.ngapure.richvisibilityprobe">
+  <uses-sdk android:minSdkVersion="29" android:targetSdkVersion="35" />
+  <queries><package android:name="cn.ngapure.app" /></queries>
+  <application android:label="NGA isolated rich text visibility" android:theme="@android:style/Theme.Material.Light.NoActionBar" android:allowBackup="false" android:supportsRtl="true">
+    <activity android:name="cn.ngapure.richvisibilityprobe.ProbeHostActivity" android:exported="false" />
+  </application>
+  <instrumentation android:name="cn.ngapure.richvisibilityprobe.RichVisibilityProbe" android:targetPackage="cn.ngapure.richvisibilityprobe" />
+</manifest>

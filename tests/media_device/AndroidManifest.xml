@@ -1,0 +1,9 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="cn.ngapure.imageprobe">
+  <uses-sdk android:minSdkVersion="28" android:targetSdkVersion="35" />
+  <queries><package android:name="cn.ngapure.app" /></queries>
+  <application android:label="NGA isolated inline image probe" android:theme="@android:style/Theme.Material.Light.NoActionBar" android:allowBackup="false" android:usesCleartextTraffic="false">
+    <activity android:name="cn.ngapure.imageprobe.ProbeHostActivity" android:exported="false" />
+  </application>
+  <instrumentation android:name="cn.ngapure.imageprobe.NativeImagesProbe" android:targetPackage="cn.ngapure.imageprobe" android:label="Own UID no Internet local Android GIF concurrency" />
+  <instrumentation android:name="cn.ngapure.imageprobe.NativeMediaPlayerProbe" android:targetPackage="cn.ngapure.imageprobe" android:label="Own UID no Internet native audio focus lifecycle" />
+</manifest>

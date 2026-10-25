@@ -1,0 +1,1 @@
+package android.app.job; public class JobService extends android.content.Context { public boolean onStartJob(JobParameters p){return false;} public boolean onStopJob(JobParameters p){return false;} public void jobFinished(JobParameters p,boolean retry){} }

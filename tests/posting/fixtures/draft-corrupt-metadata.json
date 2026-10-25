@@ -1,0 +1,1 @@
+{"action":"quote","fid":"7","tid":"456","pid":"789","subject":"保留标题","content":"不应因附件元数据损坏而丢掉的正文","updatedAt":1792302808000,"submissionUnconfirmed":false,"pendingAttachments":[{"fileName":"非法附件.png","mimeType":"image/png","bbcode":"[img]https://evil.example/image.png?auth=not-a-real-credential[/img]"}]}

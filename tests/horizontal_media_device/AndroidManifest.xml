@@ -1,0 +1,8 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="cn.ngapure.horizontalprobe">
+  <uses-sdk android:minSdkVersion="28" android:targetSdkVersion="35" />
+  <queries><package android:name="cn.ngapure.app" /></queries>
+  <application android:label="NGA isolated table image visibility" android:theme="@android:style/Theme.Material.Light.NoActionBar" android:allowBackup="false" android:supportsRtl="true">
+    <activity android:name="cn.ngapure.horizontalprobe.ProbeHostActivity" android:exported="false" />
+  </application>
+  <instrumentation android:name="cn.ngapure.horizontalprobe.HorizontalMediaProbe" android:targetPackage="cn.ngapure.horizontalprobe" />
+</manifest>

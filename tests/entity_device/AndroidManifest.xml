@@ -1,0 +1,8 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="cn.ngapure.entityprobe">
+  <uses-sdk android:minSdkVersion="28" android:targetSdkVersion="35" />
+  <queries><package android:name="cn.ngapure.app" /></queries>
+  <application android:label="NGAAA isolated emoji entities" android:theme="@android:style/Theme.Material.Light.NoActionBar" android:allowBackup="false" android:debuggable="true" android:supportsRtl="true">
+    <activity android:name="cn.ngapure.entityprobe.ProbeHostActivity" android:exported="false" />
+  </application>
+  <instrumentation android:name="cn.ngapure.entityprobe.EntityProbe" android:targetPackage="cn.ngapure.entityprobe" />
+</manifest>

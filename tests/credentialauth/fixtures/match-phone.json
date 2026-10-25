@@ -1,0 +1,9 @@
+{
+  "code": -1,
+  "msg": "安全验证",
+  "error": [
+    "需要匹配绑定手机",
+    "MATCH_PHONE"
+  ],
+  "result": []
+}

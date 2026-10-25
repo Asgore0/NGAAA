@@ -1,0 +1,96 @@
+{
+  "code": 0,
+  "result": [
+    {
+      "page": 1,
+      "next": 1,
+      "topics": [
+        {
+          "tid": 45799474,
+          "name": "超英派遣中心",
+          "image": [
+            "https://img.nga.cn/attachments/mon_202512/16/-421abQksg-ghcsKxT3cSi3-9i.jpg"
+          ],
+          "type": [
+            {
+              "type_id": 128,
+              "name": "冒险"
+            }
+          ],
+          "release_info": [
+            {
+              "platform": "Steam",
+              "platform_id": 4,
+              "date": "2025-10-22"
+            },
+            {
+              "platform": "PS5",
+              "platform_id": 8,
+              "date": "2025-10-22"
+            }
+          ],
+          "catid": 2,
+          "score": 7.6,
+          "score_count": 13
+        },
+        {
+          "tid": 45744993,
+          "name": "歧路旅人0",
+          "image": [
+            "https://img.nga.cn/attachments/mon_202512/08/-421abQ98iq-b21tK20T3cSi3-9i.jpg"
+          ],
+          "type": [
+            {
+              "type_id": 2,
+              "name": "角色扮演"
+            }
+          ],
+          "release_info": [
+            {
+              "platform": "Steam",
+              "platform_id": 4,
+              "date": "2025-12-05"
+            },
+            {
+              "platform": "PS5",
+              "platform_id": 8,
+              "date": "2025-12-05"
+            },
+            {
+              "platform": "Switch",
+              "platform_id": 3,
+              "date": "2025-12-05"
+            }
+          ],
+          "catid": 2,
+          "score": 7.9,
+          "score_count": 10
+        }
+      ],
+      "catid": 2
+    },
+    [
+      {
+        "catid": 1,
+        "name": "游戏推荐",
+        "fid": 0
+      },
+      {
+        "catid": 2,
+        "name": "传统游戏",
+        "fid": 573
+      },
+      {
+        "catid": 4,
+        "name": "手机游戏",
+        "fid": 571
+      },
+      {
+        "catid": 8,
+        "name": "影视",
+        "fid": 510475
+      }
+    ],
+    []
+  ]
+}

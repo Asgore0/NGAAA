@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "fixedBeforeCandidateMeasurement": true,
+  "createdAtUtc": "2026-10-25T09:38:13.841257+00:00",
+  "baselineVersion": "0.20.12",
+  "baselineVersionCode": 46,
+  "baselineApkSha256": "ce64ecd97683f7433195a9cc647d05450779fbbd4beeeddcfb526381ebbecdb2",
+  "baselineJarSha256": "507a45552c6b1c5dae62e35eaa31aef7502b1515fb928aa502bd790d265882af",
+  "candidateVersion": "0.20.13",
+  "candidateVersionCode": 47,
+  "rounds": 3,
+  "pairsPerRound": 7,
+  "totalPairs": 21,
+  "totalScoredLaunches": 42,
+  "preconditioningRequiredForEveryInstall": true,
+  "round1FirstOrder": "AB",
+  "round2FirstOrder": "BA",
+  "round3FirstOrder": "AB",
+  "withinRoundAlternatingOrder": true,
+  "A": "baseline",
+  "B": "candidate",
+  "sameCandidateArtifactForAllRounds": true,
+  "primaryMetric": "firstContentFromOnCreateNs",
+  "pairedDifference": "candidate-minus-baseline; negative means faster",
+  "gates": {
+    "eachRoundCandidateMedianAtMostBaselineRatio": 0.95,
+    "pooledPairedWinsAtLeast": 15,
+    "winRequiresStrictlyNegativeDifference": true,
+    "bootstrap95PercentUpperBoundStrictlyBelowNs": 0,
+    "pooledP90CandidateAtMostBaselineRatio": 1.05,
+    "allFunctionalAndAccountChecksMustPass": true,
+    "allThreeRoundsRequired": true
+  },
+  "bootstrap": {
+    "statistic": "median of 21 paired absolute nanosecond differences",
+    "resampling": "stratified by round; independently sample 7 complete pairs with replacement from each of 3 rounds and concatenate",
+    "iterations": 20000,
+    "randomSeed": 21320261025,
+    "implementation": "Python random.Random with integer randrange(7)",
+    "confidenceInterval": "two-sided percentile 95%",
+    "quantileInterpolation": "linear at (n-1)*p"
+  },
+  "p90": {
+    "population": "all 21 scored samples per variant",
+    "quantileInterpolation": "linear at (n-1)*0.90"
+  },
+  "secondaryMetrics": [
+    "firstRequestEntryFromOnCreateNs",
+    "workerSessionCaptureNs",
+    "forumResponseNs",
+    "postResponseToContentBindNs",
+    "boundToFirstDrawNs",
+    "postNetworkUiNs",
+    "headersNs",
+    "bodyNs",
+    "parsedNs"
+  ],
+  "diagnosticRules": [
+    "No secondary metric substitutes for primary first draw gates.",
+    "Do not attribute gains to lock changes if only HTTP latency improves without local-phase or lock evidence.",
+    "Absent legacy lock counters are null, not zero.",
+    "Lock telemetry is pure numeric and read-only; no account identifier, URL, cookie, argument or secret export."
+  ],
+  "executionRules": [
+    "Real existing signed-in installation, same UID and preserved preferences/Keystore.",
+    "After every install, complete an unscored launch and all automatic task checks; then force-stop, verify empty app cache and use a new PID for the scored launch.",
+    "Only --startup-state before first draw. Full UI/auth/network check and bounded automatic-task settle are after timing.",
+    "Retain every preconditioning run, scored sample, failure and pair in original order.",
+    "Finish all 3 rounds regardless of observed speed unless a functional/account/safety failure requires an abort.",
+    "No retry, dropped sample, selective rerun, extra round or optional stopping for the same candidate.",
+    "If a candidate fails performance gates, change actual source code and freeze a new candidate before repeating a complete 3-round suite; preserve failed candidate results.",
+    "Android15 force-stop restoration may deliver BOOT_COMPLETED; this is app-process-cold/app-cache-empty after stopped state, not ordinary OS reclaim or full-device-cold startup.",
+    "No recording, publication or claimed stable speedup unless every predeclared gate passes."
+  ]
+}

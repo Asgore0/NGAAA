@@ -1,0 +1,51 @@
+{
+  "code": 0,
+  "result": [
+    {
+      "page": 1,
+      "next": 1,
+      "topics": [
+        {
+          "tid": 46234580,
+          "name": "熊出没 年年有熊",
+          "image": [
+            "https://img.nga.cn/attachments/mon_202602/20/-p219Qwb3n-5kyzXaT3cS1o0-2hk.jpg"
+          ],
+          "release_info": [
+            {
+              "platform": "电影",
+              "platform_id": 0
+            }
+          ],
+          "catid": 8,
+          "score": 7.4,
+          "score_count": 15
+        }
+      ],
+      "catid": 8
+    },
+    [
+      {
+        "catid": 1,
+        "name": "游戏推荐",
+        "fid": 0
+      },
+      {
+        "catid": 2,
+        "name": "传统游戏",
+        "fid": 573
+      },
+      {
+        "catid": 4,
+        "name": "手机游戏",
+        "fid": 571
+      },
+      {
+        "catid": 8,
+        "name": "影视",
+        "fid": 510475
+      }
+    ],
+    []
+  ]
+}

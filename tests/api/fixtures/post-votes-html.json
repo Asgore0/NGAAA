@@ -1,0 +1,5 @@
+{
+  "template": "read",
+  "htmlBaseUrl": "https://bbs.nga.cn/read.php?tid=123&page=2",
+  "html": "<div id='postliststart'></div><script>var __CURRENT_TID=123;var __PAGE={0:'/read.php?tid=123&page=2',1:3,2:2,3:20};postArg.proc(20,$('container'),$('subject'),$('content'),$('sign'),$('user'),$('info'),$('button'),null,null,456,0,null,'1',123,'0,15,4','4','',null);</script>"
+}

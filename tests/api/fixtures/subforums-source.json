@@ -1,0 +1,33 @@
+{
+  "sources": [
+    {
+      "fixture": "subforums-public.json",
+      "source": "https://bbs.nga.cn/thread.php?fid=650&__output=8&__inchst=UTF8",
+      "fetchedAt": "2026-10-19",
+      "responseSha256": "9e4c7eb5c1a74fadd5a188d7b5beaa7e356949a899a1bc83965c8eed2a9180d7",
+      "responseBytes": 20656,
+      "sanitizedFields": [
+        "data.__F"
+      ],
+      "topicRowsReplacedWithEmptyArray": true,
+      "anonymousNoCookie": true
+    },
+    {
+      "fixture": "collection-public.json",
+      "source": "https://bbs.nga.cn/thread.php?stid=23673143&__output=8&__inchst=UTF8",
+      "fetchedAt": "2026-10-19",
+      "responseSha256": "75e01477e87b5285c79ee2ececa9269590454f8835f8e15ab976923cf9b94361",
+      "responseBytes": 15210,
+      "sanitizedFields": [
+        "data.__F"
+      ],
+      "topicRowsReplacedWithEmptyArray": true,
+      "anonymousNoCookie": true
+    }
+  ],
+  "officialUiReference": "commonui.selectForum.genSubForum",
+  "officialBit16": "topic collection",
+  "officialBit32": "board mirror; use tuple[0] as fid, not tuple[3]",
+  "legacySubBoardQuery": "fid=<id>&ff=<current fid>",
+  "collectionQuery": "stid=<id>"
+}

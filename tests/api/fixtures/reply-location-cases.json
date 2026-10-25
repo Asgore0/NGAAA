@@ -1,0 +1,31 @@
+{
+  "origin": "https://bbs.nga.cn/read.php?pid=456&to",
+  "tid": "123",
+  "accepted": [
+    {"location": "/read.php?tid=123&page=2#pid456Anchor", "page": 2},
+    {"location": "https://ngabbs.com/read.php?tid=123&page=3", "page": 3},
+    {"location": "https://nga.178.com/read.php?tid=123&page=2", "page": 2},
+    {"location": "https://bbs.nga.cn:443/read.php?tid=123&page=2", "page": 2},
+    {"location": "read.php?tid=123&page=2", "page": 2}
+  ],
+  "rejected": [
+    "",
+    "http://bbs.nga.cn/read.php?tid=123&page=2",
+    "https://attacker.invalid/read.php?tid=123&page=2",
+    "https://bbs.nga.cn.attacker.invalid/read.php?tid=123&page=2",
+    "https://user@bbs.nga.cn/read.php?tid=123&page=2",
+    "https://bbs.nga.cn:444/read.php?tid=123&page=2",
+    "/thread.php?tid=123&page=2",
+    "/read.php?tid=124&page=2",
+    "/read.php?tid=123",
+    "/read.php?page=2",
+    "/read.php?tid=123&page=0",
+    "/read.php?tid=123&page=-1",
+    "/read.php?tid=123&page=2.5",
+    "/read.php?tid=123&page=100001",
+    "/read.php?tid=123&tid=123&page=2",
+    "/read.php?tid=123&page=2&page=2",
+    "/read.php?tid=123&page=2\n",
+    "/read.php"
+  ]
+}

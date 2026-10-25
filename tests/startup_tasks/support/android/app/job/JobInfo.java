@@ -1,0 +1,2 @@
+package android.app.job;import android.content.ComponentName;
+public final class JobInfo {public static final int NETWORK_TYPE_ANY=1;public static final class Builder {public Builder(int id,ComponentName component){}public Builder setRequiredNetworkType(int value){return this;}public Builder setRequiresBatteryNotLow(boolean value){return this;}public Builder setPeriodic(long value){return this;}public Builder setPeriodic(long a,long b){return this;}public Builder setPersisted(boolean value){return this;}public JobInfo build(){return new JobInfo();}}}

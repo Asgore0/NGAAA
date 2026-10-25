@@ -1,0 +1,1 @@
+package cn.ngapure.app;public final class ForumFavoriteSyncState {public static final class Change {public final String key;public final boolean desired;public final long revision;public Change(String key,boolean desired,long revision){this.key=key;this.desired=desired;this.revision=revision;}}}

@@ -1,0 +1,7 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="cn.ngapure.autoverify">
+    <uses-sdk android:minSdkVersion="26" android:targetSdkVersion="35" />
+    <application android:label="NGA automatic favorite verification" android:allowBackup="false" />
+    <instrumentation android:name="cn.ngapure.autoverify.AutoFavoriteSyncProbe"
+        android:targetPackage="cn.ngapure.app"
+        android:label="Explicit automatic favorites checks and verified restoration" />
+</manifest>

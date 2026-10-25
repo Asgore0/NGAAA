@@ -1,0 +1,1573 @@
+{
+  "candidate": 6,
+  "sourceReportSha256": "002f57b1d99f262a8e53f2076479cdf4bfbb3a4ea124f34951c21198b6ab9646",
+  "protocolSha256": "c790a2ab5ec94de055d7ca697429393b8bd0f44e8c11be02fefa801e60ce48df",
+  "analysisSha256": "1e7dbcf2136690e60adac448f9c08fff9b38193a3b75ef83b348eb0ff445b916",
+  "baselineApkSha256": "ce64ecd97683f7433195a9cc647d05450779fbbd4beeeddcfb526381ebbecdb2",
+  "candidateApkSha256": "6059ff9981cd9e7fe62b7d5683bc2ac131f322bc79f07eb6299752a71dc97b33",
+  "candidateSourceFreezeSha256": "d1de9d2a7ac87346b66e5dac3663310a7be746b1ee89187620719659aa9f069d",
+  "measurement": "MainActivity.onCreate to first content OnDraw; real signed-in account, process cold and app cache empty",
+  "samples": [
+    {
+      "ordinal": 1,
+      "round": 1,
+      "pairInRound": 1,
+      "pair": 1,
+      "variant": "baseline",
+      "phase": "scored-ordinary-cold-start",
+      "passed": true,
+      "preconditioningPassed": true,
+      "automaticSettle": {
+        "passed": true
+      },
+      "timings": {
+        "firstContentFromOnCreateNs": 188219250,
+        "setupFromOnCreateNs": 4884750,
+        "createEndedFromOnCreateNs": 13222042,
+        "forumQueueNs": 784625,
+        "workerSessionCaptureNs": 1713667,
+        "cacheLookupNs": 133666,
+        "firstRequestEntryFromOnCreateNs": 15119375,
+        "forumResponseNs": 140067792,
+        "postResponseToContentBindNs": 21050750,
+        "boundToFirstDrawNs": 11981333,
+        "postNetworkUiNs": 33032083,
+        "headersNs": 136050167,
+        "bodyNs": 292167,
+        "parsedNs": 3275417
+      }
+    },
+    {
+      "ordinal": 2,
+      "round": 1,
+      "pairInRound": 1,
+      "pair": 1,
+      "variant": "candidate",
+      "phase": "scored-ordinary-cold-start",
+      "passed": true,
+      "preconditioningPassed": true,
+      "automaticSettle": {
+        "passed": true
+      },
+      "timings": {
+        "firstContentFromOnCreateNs": 203791042,
+        "setupFromOnCreateNs": 15059833,
+        "createEndedFromOnCreateNs": 23224959,
+        "forumQueueNs": 339375,
+        "workerSessionCaptureNs": 1320334,
+        "cacheLookupNs": 154791,
+        "firstRequestEntryFromOnCreateNs": 19963167,
+        "forumResponseNs": 145898458,
+        "postResponseToContentBindNs": 25195292,
+        "boundToFirstDrawNs": 12734125,
+        "postNetworkUiNs": 37929417,
+        "headersNs": 136313792,
+        "bodyNs": 246333,
+        "parsedNs": 8526458
+      }
+    },
+    {
+      "ordinal": 3,
+      "round": 1,
+      "pairInRound": 2,
+      "pair": 2,
+      "variant": "candidate",
+      "phase": "scored-ordinary-cold-start",
+      "passed": true,
+      "preconditioningPassed": true,
+      "automaticSettle": {
+        "passed": true
+      },
+      "timings": {
+        "firstContentFromOnCreateNs": 659951125,
+        "setupFromOnCreateNs": 8731375,
+        "createEndedFromOnCreateNs": 15084708,
+        "forumQueueNs": 256541,
+        "workerSessionCaptureNs": 1233959,
+        "cacheLookupNs": 95250,
+        "firstRequestEntryFromOnCreateNs": 12100750,
+        "forumResponseNs": 628825625,
+        "postResponseToContentBindNs": 6414625,
+        "boundToFirstDrawNs": 12610125,
+        "postNetworkUiNs": 19024750,
+        "headersNs": 621769542,
+        "bodyNs": 95875,
+        "parsedNs": 6384000
+      }
+    },
+    {
+      "ordinal": 4,
+      "round": 1,
+      "pairInRound": 2,
+      "pair": 2,
+      "variant": "baseline",
+      "phase": "scored-ordinary-cold-start",
+      "passed": true,
+      "preconditioningPassed": true,
+      "automaticSettle": {
+        "passed": true
+      },
+      "timings": {
+        "firstContentFromOnCreateNs": 184972250,
+        "setupFromOnCreateNs": 2115375,
+        "createEndedFromOnCreateNs": 12375042,
+        "forumQueueNs": 193667,
+        "workerSessionCaptureNs": 960958,
+        "cacheLookupNs": 188375,
+        "firstRequestEntryFromOnCreateNs": 13117750,
+        "forumResponseNs": 135401292,
+        "postResponseToContentBindNs": 22364416,
+        "boundToFirstDrawNs": 14088792,
+        "postNetworkUiNs": 36453208,
+        "headersNs": 129127750,
+        "bodyNs": 579250,
+        "parsedNs": 5232708
+      }
+    },
+    {
+      "ordinal": 5,
+      "round": 1,
+      "pairInRound": 3,
+      "pair": 3,
+      "variant": "baseline",
+      "phase": "scored-ordinary-cold-start",
+      "passed": true,
+      "preconditioningPassed": true,
+      "automaticSettle": {
+        "passed": true
+      },
+      "timings": {
+        "firstContentFromOnCreateNs": 205101542,
+        "setupFromOnCreateNs": 4228042,
+        "createEndedFromOnCreateNs": 27220625,
+        "forumQueueNs": 686167,
+        "workerSessionCaptureNs": 5826375,
+        "cacheLookupNs": 139958,
+        "firstRequestEntryFromOnCreateNs": 33280542,
+        "forumResponseNs": 149500208,
+        "postResponseToContentBindNs": 15283834,
+        "boundToFirstDrawNs": 7036958,
+        "postNetworkUiNs": 22320792,
+        "headersNs": 145916958,
+        "bodyNs": 156208,
+        "parsedNs": 2299916
+      }
+    },
+    {
+      "ordinal": 6,
+      "round": 1,
+      "pairInRound": 3,
+      "pair": 3,
+      "variant": "candidate",
+      "phase": "scored-ordinary-cold-start",
+      "passed": true,
+      "preconditioningPassed": true,
+      "automaticSettle": {
+        "passed": true
+      },
+      "timings": {
+        "firstContentFromOnCreateNs": 192583709,
+        "setupFromOnCreateNs": 23102584,
+        "createEndedFromOnCreateNs": 34853584,
+        "forumQueueNs": 203791,
+        "workerSessionCaptureNs": 1944125,
+        "cacheLookupNs": 89834,
+        "firstRequestEntryFromOnCreateNs": 26856250,
+        "forumResponseNs": 147366084,
+        "postResponseToContentBindNs": 10903833,
+        "boundToFirstDrawNs": 7457542,
+        "postNetworkUiNs": 18361375,
+        "headersNs": 143107000,
+        "bodyNs": 179208,
+        "parsedNs": 3527917
+      }
+    },
+    {
+      "ordinal": 7,
+      "round": 1,
+      "pairInRound": 4,
+      "pair": 4,
+      "variant": "candidate",
+      "phase": "scored-ordinary-cold-start",
+      "passed": true,
+      "preconditioningPassed": true,
+      "automaticSettle": {
+        "passed": true
+      },
+      "timings": {
+        "firstContentFromOnCreateNs": 143190125,
+        "setupFromOnCreateNs": 7897833,
+        "createEndedFromOnCreateNs": 17104167,
+        "forumQueueNs": 780833,
+        "workerSessionCaptureNs": 12792458,
+        "cacheLookupNs": 144834,
+        "firstRequestEntryFromOnCreateNs": 23306542,
+        "forumResponseNs": 79934833,
+        "postResponseToContentBindNs": 26568958,
+        "boundToFirstDrawNs": 13379792,
+        "postNetworkUiNs": 39948750,
+        "headersNs": 76130417,
+        "bodyNs": 94375,
+        "parsedNs": 2429209
+      }
+    },
+    {
+      "ordinal": 8,
+      "round": 1,
+      "pairInRound": 4,
+      "pair": 4,
+      "variant": "baseline",
+      "phase": "scored-ordinary-cold-start",
+      "passed": true,
+      "preconditioningPassed": true,
+      "automaticSettle": {
+        "passed": true
+      },
+      "timings": {
+        "firstContentFromOnCreateNs": 161491417,
+        "setupFromOnCreateNs": 2684500,
+        "createEndedFromOnCreateNs": 12092125,
+        "forumQueueNs": 625417,
+        "workerSessionCaptureNs": 3783291,
+        "cacheLookupNs": 172875,
+        "firstRequestEntryFromOnCreateNs": 15735250,
+        "forumResponseNs": 79168708,
+        "postResponseToContentBindNs": 52952334,
+        "boundToFirstDrawNs": 13635125,
+        "postNetworkUiNs": 66587459,
+        "headersNs": 75347083,
+        "bodyNs": 257209,
+        "parsedNs": 3123459
+      }
+    },
+    {
+      "ordinal": 9,
+      "round": 1,
+      "pairInRound": 5,
+      "pair": 5,
+      "variant": "baseline",
+      "phase": "scored-ordinary-cold-start",
+      "passed": true,
+      "preconditioningPassed": true,
+      "automaticSettle": {
+        "passed": true
+      },
+      "timings": {
+        "firstContentFromOnCreateNs": 132581459,
+        "setupFromOnCreateNs": 6740750,
+        "createEndedFromOnCreateNs": 13263000,
+        "forumQueueNs": 217625,
+        "workerSessionCaptureNs": 1913292,
+        "cacheLookupNs": 135666,
+        "firstRequestEntryFromOnCreateNs": 13935375,
+        "forumResponseNs": 84606334,
+        "postResponseToContentBindNs": 26491458,
+        "boundToFirstDrawNs": 7548292,
+        "postNetworkUiNs": 34039750,
+        "headersNs": 80351875,
+        "bodyNs": 207791,
+        "parsedNs": 3020709
+      }
+    },
+    {
+      "ordinal": 10,
+      "round": 1,
+      "pairInRound": 5,
+      "pair": 5,
+      "variant": "candidate",
+      "phase": "scored-ordinary-cold-start",
+      "passed": true,
+      "preconditioningPassed": true,
+      "automaticSettle": {
+        "passed": true
+      },
+      "timings": {
+        "firstContentFromOnCreateNs": 148157834,
+        "setupFromOnCreateNs": 13193125,
+        "createEndedFromOnCreateNs": 23040334,
+        "forumQueueNs": 213792,
+        "workerSessionCaptureNs": 955958,
+        "cacheLookupNs": 89334,
+        "firstRequestEntryFromOnCreateNs": 16923500,
+        "forumResponseNs": 79714834,
+        "postResponseToContentBindNs": 32413333,
+        "boundToFirstDrawNs": 19106167,
+        "postNetworkUiNs": 51519500,
+        "headersNs": 76085625,
+        "bodyNs": 145375,
+        "parsedNs": 3034918
+      }
+    },
+    {
+      "ordinal": 11,
+      "round": 1,
+      "pairInRound": 6,
+      "pair": 6,
+      "variant": "candidate",
+      "phase": "scored-ordinary-cold-start",
+      "passed": true,
+      "preconditioningPassed": true,
+      "automaticSettle": {
+        "passed": true
+      },
+      "timings": {
+        "firstContentFromOnCreateNs": 180372375,
+        "setupFromOnCreateNs": 10924834,
+        "createEndedFromOnCreateNs": 17102209,
+        "forumQueueNs": 208500,
+        "workerSessionCaptureNs": 920458,
+        "cacheLookupNs": 181875,
+        "firstRequestEntryFromOnCreateNs": 14002125,
+        "forumResponseNs": 113274125,
+        "postResponseToContentBindNs": 37947042,
+        "boundToFirstDrawNs": 15149083,
+        "postNetworkUiNs": 53096125,
+        "headersNs": 101827916,
+        "bodyNs": 153708,
+        "parsedNs": 10583208
+      }
+    },
+    {
+      "ordinal": 12,
+      "round": 1,
+      "pairInRound": 6,
+      "pair": 6,
+      "variant": "baseline",
+      "phase": "scored-ordinary-cold-start",
+      "passed": true,
+      "preconditioningPassed": true,
+      "automaticSettle": {
+        "passed": true
+      },
+      "timings": {
+        "firstContentFromOnCreateNs": 137277750,
+        "setupFromOnCreateNs": 1855000,
+        "createEndedFromOnCreateNs": 5057041,
+        "forumQueueNs": 200084,
+        "workerSessionCaptureNs": 762083,
+        "cacheLookupNs": 590958,
+        "firstRequestEntryFromOnCreateNs": 6114041,
+        "forumResponseNs": 77255792,
+        "postResponseToContentBindNs": 37579542,
+        "boundToFirstDrawNs": 16328375,
+        "postNetworkUiNs": 53907917,
+        "headersNs": 72561833,
+        "bodyNs": 635375,
+        "parsedNs": 3605083
+      }
+    },
+    {
+      "ordinal": 13,
+      "round": 1,
+      "pairInRound": 7,
+      "pair": 7,
+      "variant": "baseline",
+      "phase": "scored-ordinary-cold-start",
+      "passed": true,
+      "preconditioningPassed": true,
+      "automaticSettle": {
+        "passed": true
+      },
+      "timings": {
+        "firstContentFromOnCreateNs": 154697000,
+        "setupFromOnCreateNs": 8259375,
+        "createEndedFromOnCreateNs": 13839541,
+        "forumQueueNs": 234500,
+        "workerSessionCaptureNs": 8890042,
+        "cacheLookupNs": 164667,
+        "firstRequestEntryFromOnCreateNs": 21905125,
+        "forumResponseNs": 69985167,
+        "postResponseToContentBindNs": 39322583,
+        "boundToFirstDrawNs": 23484125,
+        "postNetworkUiNs": 62806708,
+        "headersNs": 65937501,
+        "bodyNs": 118750,
+        "parsedNs": 3344750
+      }
+    },
+    {
+      "ordinal": 14,
+      "round": 1,
+      "pairInRound": 7,
+      "pair": 7,
+      "variant": "candidate",
+      "phase": "scored-ordinary-cold-start",
+      "passed": true,
+      "preconditioningPassed": true,
+      "automaticSettle": {
+        "passed": true
+      },
+      "timings": {
+        "firstContentFromOnCreateNs": 145216625,
+        "setupFromOnCreateNs": 8502541,
+        "createEndedFromOnCreateNs": 16805875,
+        "forumQueueNs": 252709,
+        "workerSessionCaptureNs": 2829958,
+        "cacheLookupNs": 110125,
+        "firstRequestEntryFromOnCreateNs": 15093333,
+        "forumResponseNs": 85003417,
+        "postResponseToContentBindNs": 20349791,
+        "boundToFirstDrawNs": 24770084,
+        "postNetworkUiNs": 45119875,
+        "headersNs": 77095959,
+        "bodyNs": 243500,
+        "parsedNs": 5616751
+      }
+    },
+    {
+      "ordinal": 15,
+      "round": 2,
+      "pairInRound": 1,
+      "pair": 8,
+      "variant": "candidate",
+      "phase": "scored-ordinary-cold-start",
+      "passed": true,
+      "preconditioningPassed": true,
+      "automaticSettle": {
+        "passed": true
+      },
+      "timings": {
+        "firstContentFromOnCreateNs": 141472084,
+        "setupFromOnCreateNs": 7509042,
+        "createEndedFromOnCreateNs": 20766000,
+        "forumQueueNs": 233042,
+        "workerSessionCaptureNs": 954833,
+        "cacheLookupNs": 147458,
+        "firstRequestEntryFromOnCreateNs": 14115625,
+        "forumResponseNs": 93176209,
+        "postResponseToContentBindNs": 15227292,
+        "boundToFirstDrawNs": 18952958,
+        "postNetworkUiNs": 34180250,
+        "headersNs": 79409625,
+        "bodyNs": 5834042,
+        "parsedNs": 6978166
+      }
+    },
+    {
+      "ordinal": 16,
+      "round": 2,
+      "pairInRound": 1,
+      "pair": 8,
+      "variant": "baseline",
+      "phase": "scored-ordinary-cold-start",
+      "passed": true,
+      "preconditioningPassed": true,
+      "automaticSettle": {
+        "passed": true
+      },
+      "timings": {
+        "firstContentFromOnCreateNs": 167458917,
+        "setupFromOnCreateNs": 3152417,
+        "createEndedFromOnCreateNs": 6814917,
+        "forumQueueNs": 181417,
+        "workerSessionCaptureNs": 702166,
+        "cacheLookupNs": 96584,
+        "firstRequestEntryFromOnCreateNs": 7122792,
+        "forumResponseNs": 78146708,
+        "postResponseToContentBindNs": 54594709,
+        "boundToFirstDrawNs": 27594708,
+        "postNetworkUiNs": 82189417,
+        "headersNs": 75253041,
+        "bodyNs": 132042,
+        "parsedNs": 2273541
+      }
+    },
+    {
+      "ordinal": 17,
+      "round": 2,
+      "pairInRound": 2,
+      "pair": 9,
+      "variant": "baseline",
+      "phase": "scored-ordinary-cold-start",
+      "passed": true,
+      "preconditioningPassed": true,
+      "automaticSettle": {
+        "passed": true
+      },
+      "timings": {
+        "firstContentFromOnCreateNs": 158090334,
+        "setupFromOnCreateNs": 2815417,
+        "createEndedFromOnCreateNs": 8093542,
+        "forumQueueNs": 201125,
+        "workerSessionCaptureNs": 20646250,
+        "cacheLookupNs": 4023750,
+        "firstRequestEntryFromOnCreateNs": 31173500,
+        "forumResponseNs": 84979584,
+        "postResponseToContentBindNs": 31657000,
+        "boundToFirstDrawNs": 10280250,
+        "postNetworkUiNs": 41937250,
+        "headersNs": 72145417,
+        "bodyNs": 84792,
+        "parsedNs": 12188042
+      }
+    },
+    {
+      "ordinal": 18,
+      "round": 2,
+      "pairInRound": 2,
+      "pair": 9,
+      "variant": "candidate",
+      "phase": "scored-ordinary-cold-start",
+      "passed": true,
+      "preconditioningPassed": true,
+      "automaticSettle": {
+        "passed": true
+      },
+      "timings": {
+        "firstContentFromOnCreateNs": 163823625,
+        "setupFromOnCreateNs": 20899458,
+        "createEndedFromOnCreateNs": 35349791,
+        "forumQueueNs": 558625,
+        "workerSessionCaptureNs": 4584875,
+        "cacheLookupNs": 148416,
+        "firstRequestEntryFromOnCreateNs": 34440458,
+        "forumResponseNs": 79534250,
+        "postResponseToContentBindNs": 33739542,
+        "boundToFirstDrawNs": 16109375,
+        "postNetworkUiNs": 49848917,
+        "headersNs": 74756167,
+        "bodyNs": 878333,
+        "parsedNs": 3259500
+      }
+    },
+    {
+      "ordinal": 19,
+      "round": 2,
+      "pairInRound": 3,
+      "pair": 10,
+      "variant": "candidate",
+      "phase": "scored-ordinary-cold-start",
+      "passed": true,
+      "preconditioningPassed": true,
+      "automaticSettle": {
+        "passed": true
+      },
+      "timings": {
+        "firstContentFromOnCreateNs": 132823459,
+        "setupFromOnCreateNs": 10990125,
+        "createEndedFromOnCreateNs": 17633667,
+        "forumQueueNs": 229125,
+        "workerSessionCaptureNs": 831833,
+        "cacheLookupNs": 100667,
+        "firstRequestEntryFromOnCreateNs": 13968959,
+        "forumResponseNs": 70307625,
+        "postResponseToContentBindNs": 35240417,
+        "boundToFirstDrawNs": 13306458,
+        "postNetworkUiNs": 48546875,
+        "headersNs": 63975209,
+        "bodyNs": 202667,
+        "parsedNs": 5690958
+      }
+    },
+    {
+      "ordinal": 20,
+      "round": 2,
+      "pairInRound": 3,
+      "pair": 10,
+      "variant": "baseline",
+      "phase": "scored-ordinary-cold-start",
+      "passed": true,
+      "preconditioningPassed": true,
+      "automaticSettle": {
+        "passed": true
+      },
+      "timings": {
+        "firstContentFromOnCreateNs": 129691584,
+        "setupFromOnCreateNs": 7537875,
+        "createEndedFromOnCreateNs": 12688500,
+        "forumQueueNs": 183667,
+        "workerSessionCaptureNs": 1085083,
+        "cacheLookupNs": 119333,
+        "firstRequestEntryFromOnCreateNs": 13352959,
+        "forumResponseNs": 78556125,
+        "postResponseToContentBindNs": 22493291,
+        "boundToFirstDrawNs": 15289209,
+        "postNetworkUiNs": 37782500,
+        "headersNs": 73347667,
+        "bodyNs": 192500,
+        "parsedNs": 4582542
+      }
+    },
+    {
+      "ordinal": 21,
+      "round": 2,
+      "pairInRound": 4,
+      "pair": 11,
+      "variant": "baseline",
+      "phase": "scored-ordinary-cold-start",
+      "passed": true,
+      "preconditioningPassed": true,
+      "automaticSettle": {
+        "passed": true
+      },
+      "timings": {
+        "firstContentFromOnCreateNs": 165507167,
+        "setupFromOnCreateNs": 3192000,
+        "createEndedFromOnCreateNs": 14522000,
+        "forumQueueNs": 426333,
+        "workerSessionCaptureNs": 945125,
+        "cacheLookupNs": 122875,
+        "firstRequestEntryFromOnCreateNs": 14672750,
+        "forumResponseNs": 119519042,
+        "postResponseToContentBindNs": 18458541,
+        "boundToFirstDrawNs": 12856834,
+        "postNetworkUiNs": 31315375,
+        "headersNs": 115970000,
+        "bodyNs": 84667,
+        "parsedNs": 2828792
+      }
+    },
+    {
+      "ordinal": 22,
+      "round": 2,
+      "pairInRound": 4,
+      "pair": 11,
+      "variant": "candidate",
+      "phase": "scored-ordinary-cold-start",
+      "passed": true,
+      "preconditioningPassed": true,
+      "automaticSettle": {
+        "passed": true
+      },
+      "timings": {
+        "firstContentFromOnCreateNs": 117347583,
+        "setupFromOnCreateNs": 9777250,
+        "createEndedFromOnCreateNs": 17059000,
+        "forumQueueNs": 273083,
+        "workerSessionCaptureNs": 1951917,
+        "cacheLookupNs": 117666,
+        "firstRequestEntryFromOnCreateNs": 14796500,
+        "forumResponseNs": 69456917,
+        "postResponseToContentBindNs": 17520250,
+        "boundToFirstDrawNs": 15573916,
+        "postNetworkUiNs": 33094166,
+        "headersNs": 65453000,
+        "bodyNs": 271042,
+        "parsedNs": 3179375
+      }
+    },
+    {
+      "ordinal": 23,
+      "round": 2,
+      "pairInRound": 5,
+      "pair": 12,
+      "variant": "candidate",
+      "phase": "scored-ordinary-cold-start",
+      "passed": true,
+      "preconditioningPassed": true,
+      "automaticSettle": {
+        "passed": true
+      },
+      "timings": {
+        "firstContentFromOnCreateNs": 141258125,
+        "setupFromOnCreateNs": 11086334,
+        "createEndedFromOnCreateNs": 17527000,
+        "forumQueueNs": 207750,
+        "workerSessionCaptureNs": 2161833,
+        "cacheLookupNs": 124000,
+        "firstRequestEntryFromOnCreateNs": 15170375,
+        "forumResponseNs": 98743542,
+        "postResponseToContentBindNs": 6353375,
+        "boundToFirstDrawNs": 20990833,
+        "postNetworkUiNs": 27344208,
+        "headersNs": 86963958,
+        "bodyNs": 161125,
+        "parsedNs": 11087542
+      }
+    },
+    {
+      "ordinal": 24,
+      "round": 2,
+      "pairInRound": 5,
+      "pair": 12,
+      "variant": "baseline",
+      "phase": "scored-ordinary-cold-start",
+      "passed": true,
+      "preconditioningPassed": true,
+      "automaticSettle": {
+        "passed": true
+      },
+      "timings": {
+        "firstContentFromOnCreateNs": 191833125,
+        "setupFromOnCreateNs": 7369709,
+        "createEndedFromOnCreateNs": 13051667,
+        "forumQueueNs": 765000,
+        "workerSessionCaptureNs": 2157334,
+        "cacheLookupNs": 178375,
+        "firstRequestEntryFromOnCreateNs": 15391084,
+        "forumResponseNs": 117537083,
+        "postResponseToContentBindNs": 47014833,
+        "boundToFirstDrawNs": 11890125,
+        "postNetworkUiNs": 58904958,
+        "headersNs": 100353292,
+        "bodyNs": 182833,
+        "parsedNs": 16389291
+      }
+    },
+    {
+      "ordinal": 25,
+      "round": 2,
+      "pairInRound": 6,
+      "pair": 13,
+      "variant": "baseline",
+      "phase": "scored-ordinary-cold-start",
+      "passed": true,
+      "preconditioningPassed": true,
+      "automaticSettle": {
+        "passed": true
+      },
+      "timings": {
+        "firstContentFromOnCreateNs": 143571375,
+        "setupFromOnCreateNs": 2718500,
+        "createEndedFromOnCreateNs": 10840333,
+        "forumQueueNs": 530125,
+        "workerSessionCaptureNs": 2289084,
+        "cacheLookupNs": 208250,
+        "firstRequestEntryFromOnCreateNs": 13175333,
+        "forumResponseNs": 72577875,
+        "postResponseToContentBindNs": 34922958,
+        "boundToFirstDrawNs": 22895209,
+        "postNetworkUiNs": 57818167,
+        "headersNs": 65654250,
+        "bodyNs": 160334,
+        "parsedNs": 3858166
+      }
+    },
+    {
+      "ordinal": 26,
+      "round": 2,
+      "pairInRound": 6,
+      "pair": 13,
+      "variant": "candidate",
+      "phase": "scored-ordinary-cold-start",
+      "passed": true,
+      "preconditioningPassed": true,
+      "automaticSettle": {
+        "passed": true
+      },
+      "timings": {
+        "firstContentFromOnCreateNs": 204241792,
+        "setupFromOnCreateNs": 12236833,
+        "createEndedFromOnCreateNs": 21792917,
+        "forumQueueNs": 236333,
+        "workerSessionCaptureNs": 1620292,
+        "cacheLookupNs": 129625,
+        "firstRequestEntryFromOnCreateNs": 16630083,
+        "forumResponseNs": 90209834,
+        "postResponseToContentBindNs": 68833500,
+        "boundToFirstDrawNs": 28568375,
+        "postNetworkUiNs": 97401875,
+        "headersNs": 85301000,
+        "bodyNs": 170791,
+        "parsedNs": 4131499
+      }
+    },
+    {
+      "ordinal": 27,
+      "round": 2,
+      "pairInRound": 7,
+      "pair": 14,
+      "variant": "candidate",
+      "phase": "scored-ordinary-cold-start",
+      "passed": true,
+      "preconditioningPassed": true,
+      "automaticSettle": {
+        "passed": true
+      },
+      "timings": {
+        "firstContentFromOnCreateNs": 251522917,
+        "setupFromOnCreateNs": 18530792,
+        "createEndedFromOnCreateNs": 45635584,
+        "forumQueueNs": 6683583,
+        "workerSessionCaptureNs": 8347917,
+        "cacheLookupNs": 175292,
+        "firstRequestEntryFromOnCreateNs": 37099417,
+        "forumResponseNs": 145557542,
+        "postResponseToContentBindNs": 58863250,
+        "boundToFirstDrawNs": 10002708,
+        "postNetworkUiNs": 68865958,
+        "headersNs": 126328375,
+        "bodyNs": 217959,
+        "parsedNs": 5957375
+      }
+    },
+    {
+      "ordinal": 28,
+      "round": 2,
+      "pairInRound": 7,
+      "pair": 14,
+      "variant": "baseline",
+      "phase": "scored-ordinary-cold-start",
+      "passed": true,
+      "preconditioningPassed": true,
+      "automaticSettle": {
+        "passed": true
+      },
+      "timings": {
+        "firstContentFromOnCreateNs": 175029000,
+        "setupFromOnCreateNs": 5277500,
+        "createEndedFromOnCreateNs": 18899708,
+        "forumQueueNs": 338042,
+        "workerSessionCaptureNs": 3001333,
+        "cacheLookupNs": 310458,
+        "firstRequestEntryFromOnCreateNs": 21494292,
+        "forumResponseNs": 98107750,
+        "postResponseToContentBindNs": 21011291,
+        "boundToFirstDrawNs": 34415667,
+        "postNetworkUiNs": 55426958,
+        "headersNs": 91964334,
+        "bodyNs": 168083,
+        "parsedNs": 4761083
+      }
+    },
+    {
+      "ordinal": 29,
+      "round": 3,
+      "pairInRound": 1,
+      "pair": 15,
+      "variant": "baseline",
+      "phase": "scored-ordinary-cold-start",
+      "passed": true,
+      "preconditioningPassed": true,
+      "automaticSettle": {
+        "passed": true
+      },
+      "timings": {
+        "firstContentFromOnCreateNs": 185078875,
+        "setupFromOnCreateNs": 2802666,
+        "createEndedFromOnCreateNs": 6553791,
+        "forumQueueNs": 299334,
+        "workerSessionCaptureNs": 920291,
+        "cacheLookupNs": 174209,
+        "firstRequestEntryFromOnCreateNs": 7268583,
+        "forumResponseNs": 95767750,
+        "postResponseToContentBindNs": 64206542,
+        "boundToFirstDrawNs": 17836000,
+        "postNetworkUiNs": 82042542,
+        "headersNs": 84086083,
+        "bodyNs": 134958,
+        "parsedNs": 3949083
+      }
+    },
+    {
+      "ordinal": 30,
+      "round": 3,
+      "pairInRound": 1,
+      "pair": 15,
+      "variant": "candidate",
+      "phase": "scored-ordinary-cold-start",
+      "passed": true,
+      "preconditioningPassed": true,
+      "automaticSettle": {
+        "passed": true
+      },
+      "timings": {
+        "firstContentFromOnCreateNs": 122409000,
+        "setupFromOnCreateNs": 5976959,
+        "createEndedFromOnCreateNs": 17492584,
+        "forumQueueNs": 269834,
+        "workerSessionCaptureNs": 8059125,
+        "cacheLookupNs": 142583,
+        "firstRequestEntryFromOnCreateNs": 16125125,
+        "forumResponseNs": 71195334,
+        "postResponseToContentBindNs": 19589000,
+        "boundToFirstDrawNs": 15499541,
+        "postNetworkUiNs": 35088541,
+        "headersNs": 67201583,
+        "bodyNs": 155291,
+        "parsedNs": 3329291
+      }
+    },
+    {
+      "ordinal": 31,
+      "round": 3,
+      "pairInRound": 2,
+      "pair": 16,
+      "variant": "candidate",
+      "phase": "scored-ordinary-cold-start",
+      "passed": true,
+      "preconditioningPassed": true,
+      "automaticSettle": {
+        "passed": true
+      },
+      "timings": {
+        "firstContentFromOnCreateNs": 148422458,
+        "setupFromOnCreateNs": 9816750,
+        "createEndedFromOnCreateNs": 16550417,
+        "forumQueueNs": 241334,
+        "workerSessionCaptureNs": 795625,
+        "cacheLookupNs": 96333,
+        "firstRequestEntryFromOnCreateNs": 13503875,
+        "forumResponseNs": 70399667,
+        "postResponseToContentBindNs": 36827875,
+        "boundToFirstDrawNs": 27691041,
+        "postNetworkUiNs": 64518916,
+        "headersNs": 65883750,
+        "bodyNs": 119667,
+        "parsedNs": 3916334
+      }
+    },
+    {
+      "ordinal": 32,
+      "round": 3,
+      "pairInRound": 2,
+      "pair": 16,
+      "variant": "baseline",
+      "phase": "scored-ordinary-cold-start",
+      "passed": true,
+      "preconditioningPassed": true,
+      "automaticSettle": {
+        "passed": true
+      },
+      "timings": {
+        "firstContentFromOnCreateNs": 145322584,
+        "setupFromOnCreateNs": 5196209,
+        "createEndedFromOnCreateNs": 11612000,
+        "forumQueueNs": 293000,
+        "workerSessionCaptureNs": 1072458,
+        "cacheLookupNs": 130125,
+        "firstRequestEntryFromOnCreateNs": 12234459,
+        "forumResponseNs": 64238792,
+        "postResponseToContentBindNs": 55924166,
+        "boundToFirstDrawNs": 12925167,
+        "postNetworkUiNs": 68849333,
+        "headersNs": 60150917,
+        "bodyNs": 167459,
+        "parsedNs": 3443166
+      }
+    },
+    {
+      "ordinal": 33,
+      "round": 3,
+      "pairInRound": 3,
+      "pair": 17,
+      "variant": "baseline",
+      "phase": "scored-ordinary-cold-start",
+      "passed": true,
+      "preconditioningPassed": true,
+      "automaticSettle": {
+        "passed": true
+      },
+      "timings": {
+        "firstContentFromOnCreateNs": 180999000,
+        "setupFromOnCreateNs": 5752500,
+        "createEndedFromOnCreateNs": 41336958,
+        "forumQueueNs": 777459,
+        "workerSessionCaptureNs": 5917166,
+        "cacheLookupNs": 645709,
+        "firstRequestEntryFromOnCreateNs": 47480167,
+        "forumResponseNs": 81897375,
+        "postResponseToContentBindNs": 34591291,
+        "boundToFirstDrawNs": 17030167,
+        "postNetworkUiNs": 51621458,
+        "headersNs": 73203084,
+        "bodyNs": 185833,
+        "parsedNs": 8039917
+      }
+    },
+    {
+      "ordinal": 34,
+      "round": 3,
+      "pairInRound": 3,
+      "pair": 17,
+      "variant": "candidate",
+      "phase": "scored-ordinary-cold-start",
+      "passed": true,
+      "preconditioningPassed": true,
+      "automaticSettle": {
+        "passed": true
+      },
+      "timings": {
+        "firstContentFromOnCreateNs": 191628791,
+        "setupFromOnCreateNs": 6570958,
+        "createEndedFromOnCreateNs": 20328958,
+        "forumQueueNs": 195667,
+        "workerSessionCaptureNs": 650875,
+        "cacheLookupNs": 183833,
+        "firstRequestEntryFromOnCreateNs": 9383750,
+        "forumResponseNs": 125651916,
+        "postResponseToContentBindNs": 39318834,
+        "boundToFirstDrawNs": 17274291,
+        "postNetworkUiNs": 56593125,
+        "headersNs": 116397000,
+        "bodyNs": 119750,
+        "parsedNs": 6434500
+      }
+    },
+    {
+      "ordinal": 35,
+      "round": 3,
+      "pairInRound": 4,
+      "pair": 18,
+      "variant": "candidate",
+      "phase": "scored-ordinary-cold-start",
+      "passed": true,
+      "preconditioningPassed": true,
+      "automaticSettle": {
+        "passed": true
+      },
+      "timings": {
+        "firstContentFromOnCreateNs": 142001084,
+        "setupFromOnCreateNs": 7254750,
+        "createEndedFromOnCreateNs": 18488584,
+        "forumQueueNs": 209417,
+        "workerSessionCaptureNs": 2273208,
+        "cacheLookupNs": 123417,
+        "firstRequestEntryFromOnCreateNs": 11549542,
+        "forumResponseNs": 93465917,
+        "postResponseToContentBindNs": 30239958,
+        "boundToFirstDrawNs": 6745667,
+        "postNetworkUiNs": 36985625,
+        "headersNs": 74559625,
+        "bodyNs": 378792,
+        "parsedNs": 12321750
+      }
+    },
+    {
+      "ordinal": 36,
+      "round": 3,
+      "pairInRound": 4,
+      "pair": 18,
+      "variant": "baseline",
+      "phase": "scored-ordinary-cold-start",
+      "passed": true,
+      "preconditioningPassed": true,
+      "automaticSettle": {
+        "passed": true
+      },
+      "timings": {
+        "firstContentFromOnCreateNs": 154297459,
+        "setupFromOnCreateNs": 10794708,
+        "createEndedFromOnCreateNs": 14475208,
+        "forumQueueNs": 311833,
+        "workerSessionCaptureNs": 1235500,
+        "cacheLookupNs": 111625,
+        "firstRequestEntryFromOnCreateNs": 15579875,
+        "forumResponseNs": 76138125,
+        "postResponseToContentBindNs": 45458875,
+        "boundToFirstDrawNs": 17120584,
+        "postNetworkUiNs": 62579459,
+        "headersNs": 71003084,
+        "bodyNs": 138458,
+        "parsedNs": 4491167
+      }
+    },
+    {
+      "ordinal": 37,
+      "round": 3,
+      "pairInRound": 5,
+      "pair": 19,
+      "variant": "baseline",
+      "phase": "scored-ordinary-cold-start",
+      "passed": true,
+      "preconditioningPassed": true,
+      "automaticSettle": {
+        "passed": true
+      },
+      "timings": {
+        "firstContentFromOnCreateNs": 168007709,
+        "setupFromOnCreateNs": 2329459,
+        "createEndedFromOnCreateNs": 10181584,
+        "forumQueueNs": 1260625,
+        "workerSessionCaptureNs": 1139458,
+        "cacheLookupNs": 164084,
+        "firstRequestEntryFromOnCreateNs": 11871250,
+        "forumResponseNs": 73643334,
+        "postResponseToContentBindNs": 68060417,
+        "boundToFirstDrawNs": 14432708,
+        "postNetworkUiNs": 82493125,
+        "headersNs": 69938792,
+        "bodyNs": 135208,
+        "parsedNs": 3087251
+      }
+    },
+    {
+      "ordinal": 38,
+      "round": 3,
+      "pairInRound": 5,
+      "pair": 19,
+      "variant": "candidate",
+      "phase": "scored-ordinary-cold-start",
+      "passed": true,
+      "preconditioningPassed": true,
+      "automaticSettle": {
+        "passed": true
+      },
+      "timings": {
+        "firstContentFromOnCreateNs": 146886417,
+        "setupFromOnCreateNs": 13364917,
+        "createEndedFromOnCreateNs": 19687333,
+        "forumQueueNs": 228916,
+        "workerSessionCaptureNs": 2034042,
+        "cacheLookupNs": 124667,
+        "firstRequestEntryFromOnCreateNs": 17633917,
+        "forumResponseNs": 83877416,
+        "postResponseToContentBindNs": 22731125,
+        "boundToFirstDrawNs": 22643959,
+        "postNetworkUiNs": 45375084,
+        "headersNs": 78712958,
+        "bodyNs": 61042,
+        "parsedNs": 4424000
+      }
+    },
+    {
+      "ordinal": 39,
+      "round": 3,
+      "pairInRound": 6,
+      "pair": 20,
+      "variant": "candidate",
+      "phase": "scored-ordinary-cold-start",
+      "passed": true,
+      "preconditioningPassed": true,
+      "automaticSettle": {
+        "passed": true
+      },
+      "timings": {
+        "firstContentFromOnCreateNs": 180790917,
+        "setupFromOnCreateNs": 24431167,
+        "createEndedFromOnCreateNs": 43088167,
+        "forumQueueNs": 267042,
+        "workerSessionCaptureNs": 943916,
+        "cacheLookupNs": 140542,
+        "firstRequestEntryFromOnCreateNs": 29653083,
+        "forumResponseNs": 127502875,
+        "postResponseToContentBindNs": 11586875,
+        "boundToFirstDrawNs": 12048084,
+        "postNetworkUiNs": 23634959,
+        "headersNs": 113091833,
+        "bodyNs": 233625,
+        "parsedNs": 13663291
+      }
+    },
+    {
+      "ordinal": 40,
+      "round": 3,
+      "pairInRound": 6,
+      "pair": 20,
+      "variant": "baseline",
+      "phase": "scored-ordinary-cold-start",
+      "passed": true,
+      "preconditioningPassed": true,
+      "automaticSettle": {
+        "passed": true
+      },
+      "timings": {
+        "firstContentFromOnCreateNs": 143950791,
+        "setupFromOnCreateNs": 2745625,
+        "createEndedFromOnCreateNs": 7516541,
+        "forumQueueNs": 168708,
+        "workerSessionCaptureNs": 1829750,
+        "cacheLookupNs": 4288042,
+        "firstRequestEntryFromOnCreateNs": 12918250,
+        "forumResponseNs": 69908666,
+        "postResponseToContentBindNs": 50507459,
+        "boundToFirstDrawNs": 10616416,
+        "postNetworkUiNs": 61123875,
+        "headersNs": 65431291,
+        "bodyNs": 195209,
+        "parsedNs": 3399459
+      }
+    },
+    {
+      "ordinal": 41,
+      "round": 3,
+      "pairInRound": 7,
+      "pair": 21,
+      "variant": "baseline",
+      "phase": "scored-ordinary-cold-start",
+      "passed": true,
+      "preconditioningPassed": true,
+      "automaticSettle": {
+        "passed": true
+      },
+      "timings": {
+        "firstContentFromOnCreateNs": 195412167,
+        "setupFromOnCreateNs": 8780292,
+        "createEndedFromOnCreateNs": 18475750,
+        "forumQueueNs": 525708,
+        "workerSessionCaptureNs": 7954334,
+        "cacheLookupNs": 315625,
+        "firstRequestEntryFromOnCreateNs": 25130417,
+        "forumResponseNs": 74506500,
+        "postResponseToContentBindNs": 79288875,
+        "boundToFirstDrawNs": 16486375,
+        "postNetworkUiNs": 95775250,
+        "headersNs": 69514375,
+        "bodyNs": 95250,
+        "parsedNs": 4071625
+      }
+    },
+    {
+      "ordinal": 42,
+      "round": 3,
+      "pairInRound": 7,
+      "pair": 21,
+      "variant": "candidate",
+      "phase": "scored-ordinary-cold-start",
+      "passed": true,
+      "preconditioningPassed": true,
+      "automaticSettle": {
+        "passed": true
+      },
+      "timings": {
+        "firstContentFromOnCreateNs": 162253917,
+        "setupFromOnCreateNs": 8573000,
+        "createEndedFromOnCreateNs": 16406625,
+        "forumQueueNs": 220083,
+        "workerSessionCaptureNs": 936375,
+        "cacheLookupNs": 94750,
+        "firstRequestEntryFromOnCreateNs": 12540792,
+        "forumResponseNs": 82286917,
+        "postResponseToContentBindNs": 52049875,
+        "boundToFirstDrawNs": 15376333,
+        "postNetworkUiNs": 67426208,
+        "headersNs": 71818875,
+        "bodyNs": 74916,
+        "parsedNs": 9799334
+      }
+    }
+  ],
+  "result": {
+    "passed": false,
+    "gates": {
+      "allRoundMedianImprovements": false,
+      "pooledPairedWins": false,
+      "pairedBootstrapUpperBound": false,
+      "pooledP90": false,
+      "allFunctionalChecks": true,
+      "allThreeRoundsComplete": true
+    },
+    "failedGates": [
+      "allRoundMedianImprovements",
+      "pooledPairedWins",
+      "pairedBootstrapUpperBound",
+      "pooledP90"
+    ],
+    "rounds": [
+      {
+        "round": 1,
+        "baselineMedianNs": 161491417,
+        "candidateMedianNs": 180372375,
+        "candidateBaselineRatio": 1.1169161702259385,
+        "medianImprovementPercent": -11.691617022593848,
+        "pairedDifferencesNs": [
+          15571792,
+          474978875,
+          -12517833,
+          -18301292,
+          15576375,
+          43094625,
+          -9480375
+        ],
+        "pairedWins": 3,
+        "medianGatePassed": false,
+        "secondaryMedianNs": {
+          "bodyNs": {
+            "baseline": 257209,
+            "candidate": 153708
+          },
+          "boundToFirstDrawNs": {
+            "baseline": 13635125,
+            "candidate": 13379792
+          },
+          "cacheLookupNs": {
+            "baseline": 164667,
+            "candidate": 110125
+          },
+          "createEndedFromOnCreateNs": {
+            "baseline": 13222042,
+            "candidate": 17104167
+          },
+          "firstRequestEntryFromOnCreateNs": {
+            "baseline": 15119375,
+            "candidate": 16923500
+          },
+          "forumQueueNs": {
+            "baseline": 234500,
+            "candidate": 252709
+          },
+          "forumResponseNs": {
+            "baseline": 84606334,
+            "candidate": 113274125
+          },
+          "headersNs": {
+            "baseline": 80351875,
+            "candidate": 101827916
+          },
+          "parsedNs": {
+            "baseline": 3275417,
+            "candidate": 5616751
+          },
+          "postNetworkUiNs": {
+            "baseline": 36453208,
+            "candidate": 39948750
+          },
+          "postResponseToContentBindNs": {
+            "baseline": 26491458,
+            "candidate": 25195292
+          },
+          "setupFromOnCreateNs": {
+            "baseline": 4228042,
+            "candidate": 10924834
+          },
+          "workerSessionCaptureNs": {
+            "baseline": 1913292,
+            "candidate": 1320334
+          }
+        }
+      },
+      {
+        "round": 2,
+        "baselineMedianNs": 165507167,
+        "candidateMedianNs": 141472084,
+        "candidateBaselineRatio": 0.8547792011931423,
+        "medianImprovementPercent": 14.522079880685768,
+        "pairedDifferencesNs": [
+          -25986833,
+          5733291,
+          3131875,
+          -48159584,
+          -50575000,
+          60670417,
+          76493917
+        ],
+        "pairedWins": 3,
+        "medianGatePassed": true,
+        "secondaryMedianNs": {
+          "bodyNs": {
+            "baseline": 160334,
+            "candidate": 217959
+          },
+          "boundToFirstDrawNs": {
+            "baseline": 15289209,
+            "candidate": 16109375
+          },
+          "cacheLookupNs": {
+            "baseline": 178375,
+            "candidate": 129625
+          },
+          "createEndedFromOnCreateNs": {
+            "baseline": 12688500,
+            "candidate": 20766000
+          },
+          "firstRequestEntryFromOnCreateNs": {
+            "baseline": 14672750,
+            "candidate": 15170375
+          },
+          "forumQueueNs": {
+            "baseline": 338042,
+            "candidate": 236333
+          },
+          "forumResponseNs": {
+            "baseline": 84979584,
+            "candidate": 90209834
+          },
+          "headersNs": {
+            "baseline": 75253041,
+            "candidate": 79409625
+          },
+          "parsedNs": {
+            "baseline": 4582542,
+            "candidate": 5690958
+          },
+          "postNetworkUiNs": {
+            "baseline": 55426958,
+            "candidate": 48546875
+          },
+          "postResponseToContentBindNs": {
+            "baseline": 31657000,
+            "candidate": 33739542
+          },
+          "setupFromOnCreateNs": {
+            "baseline": 3192000,
+            "candidate": 11086334
+          },
+          "workerSessionCaptureNs": {
+            "baseline": 2157334,
+            "candidate": 1951917
+          }
+        }
+      },
+      {
+        "round": 3,
+        "baselineMedianNs": 168007709,
+        "candidateMedianNs": 148422458,
+        "candidateBaselineRatio": 0.8834264741982762,
+        "medianImprovementPercent": 11.657352580172375,
+        "pairedDifferencesNs": [
+          -62669875,
+          3099874,
+          10629791,
+          -12296375,
+          -21121292,
+          36840126,
+          -33158250
+        ],
+        "pairedWins": 4,
+        "medianGatePassed": true,
+        "secondaryMedianNs": {
+          "bodyNs": {
+            "baseline": 138458,
+            "candidate": 119750
+          },
+          "boundToFirstDrawNs": {
+            "baseline": 16486375,
+            "candidate": 15499541
+          },
+          "cacheLookupNs": {
+            "baseline": 174209,
+            "candidate": 124667
+          },
+          "createEndedFromOnCreateNs": {
+            "baseline": 11612000,
+            "candidate": 18488584
+          },
+          "firstRequestEntryFromOnCreateNs": {
+            "baseline": 12918250,
+            "candidate": 13503875
+          },
+          "forumQueueNs": {
+            "baseline": 311833,
+            "candidate": 228916
+          },
+          "forumResponseNs": {
+            "baseline": 74506500,
+            "candidate": 83877416
+          },
+          "headersNs": {
+            "baseline": 69938792,
+            "candidate": 74559625
+          },
+          "parsedNs": {
+            "baseline": 3949083,
+            "candidate": 6434500
+          },
+          "postNetworkUiNs": {
+            "baseline": 68849333,
+            "candidate": 45375084
+          },
+          "postResponseToContentBindNs": {
+            "baseline": 55924166,
+            "candidate": 30239958
+          },
+          "setupFromOnCreateNs": {
+            "baseline": 5196209,
+            "candidate": 8573000
+          },
+          "workerSessionCaptureNs": {
+            "baseline": 1235500,
+            "candidate": 943916
+          }
+        }
+      }
+    ],
+    "pairedDifferencesNs": [
+      15571792,
+      474978875,
+      -12517833,
+      -18301292,
+      15576375,
+      43094625,
+      -9480375,
+      -25986833,
+      5733291,
+      3131875,
+      -48159584,
+      -50575000,
+      60670417,
+      76493917,
+      -62669875,
+      3099874,
+      10629791,
+      -12296375,
+      -21121292,
+      36840126,
+      -33158250
+    ],
+    "pairedWins": 10,
+    "pairedTies": 0,
+    "pairedLosses": 11,
+    "medianPairedDifferenceNs": 3099874,
+    "pooled": {
+      "baseline": {
+        "samplesNs": [
+          188219250,
+          184972250,
+          205101542,
+          161491417,
+          132581459,
+          137277750,
+          154697000,
+          167458917,
+          158090334,
+          129691584,
+          165507167,
+          191833125,
+          143571375,
+          175029000,
+          185078875,
+          145322584,
+          180999000,
+          154297459,
+          168007709,
+          143950791,
+          195412167
+        ],
+        "medianNs": 165507167,
+        "p90Ns": 191833125.0,
+        "minNs": 129691584,
+        "maxNs": 205101542
+      },
+      "candidate": {
+        "samplesNs": [
+          203791042,
+          659951125,
+          192583709,
+          143190125,
+          148157834,
+          180372375,
+          145216625,
+          141472084,
+          163823625,
+          132823459,
+          117347583,
+          141258125,
+          204241792,
+          251522917,
+          122409000,
+          148422458,
+          191628791,
+          142001084,
+          146886417,
+          180790917,
+          162253917
+        ],
+        "medianNs": 148422458,
+        "p90Ns": 204241792.0,
+        "minNs": 117347583,
+        "maxNs": 659951125
+      }
+    },
+    "bootstrap": {
+      "statistic": "median of 21 paired absolute nanosecond differences",
+      "resampling": "stratified by round; independently sample 7 complete pairs with replacement from each of 3 rounds and concatenate",
+      "iterations": 20000,
+      "randomSeed": 21320261025,
+      "implementation": "Python random.Random with integer randrange(7)",
+      "confidenceInterval": "two-sided percentile 95%",
+      "quantileInterpolation": "linear at (n-1)*p",
+      "lowerNs": -18301292.0,
+      "upperNs": 15571792.0
+    },
+    "interpretation": "These preregistered gates apply only to this exact candidate and stopped-state, real signed-in, app-cache-empty test setup. Network and device variance remain; secondary metrics do not replace first-draw gates."
+  },
+  "preconditioningRunsExcludedFromLatency": 42,
+  "preconditioningAllPassed": true,
+  "credentialsOrAccountIdentifiersIncluded": false,
+  "limitations": [
+    "Public export preserves all scored timings/order, functional booleans and artifact hashes. Original device diagnostics remain local.",
+    "System, DNS, ART and server caches were not reset. Android force-stop restoration may deliver BOOT_COMPLETED.",
+    "OnDraw is not complete image loading or GPU presentation. Network stages do not isolate DNS/TLS/server causes.",
+    "Comparisons belong to distinct candidate cohorts; do not pool them as repetitions of one candidate."
+  ]
+}

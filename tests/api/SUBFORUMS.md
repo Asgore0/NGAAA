@@ -1,0 +1,9 @@
+# Native child-board and collection routing
+
+The anonymous official `thread.php?fid=650&__output=8&__inchst=UTF8` response was inspected on 2026-10-19. Its `__F.sub_forums` contains numeric-index objects: `[id, name, description, mirrorTopic, flags]`. The corresponding official `commonui.selectForum` documents flag 16 as a topic collection and flag 32 as a board mirror. Its `genSubForum` builds ordinary child links with `fid=<tuple[0]>&ff=<parent fid>` and collection links with `stid=<tuple[0]>`. Tuple element 3 is never a replacement child fid.
+
+`subforums-public.json` retains only public `__F` metadata; all topic rows were replaced with an empty array. `collection-public.json` demonstrates that the collection `stid=23673143` has base `__F.fid=650` while `set_topic_tid=23673143` and `set_topic_subject=天命既定`. The native route therefore keeps the collection key `stid:23673143`, instead of opening its parent. Response digests and exact public sources are recorded in `subforums-source.json`.
+
+Public image reads confirmed the ordinary 180px endpoints for child boards 754 and 793, and the 40px collection endpoints for 23673143 and 26640400. The same official URL shapes are used for dynamic child entries; existing bundled artwork is reused by NativeImages, and missing artwork retains the native labeled avatar. No parent artwork is substituted for a collection.
+
+Unknown `parent` / `tab` / `__tab` query meanings have not been inferred. They remain browser URLs under the existing navigation policy, rather than silently becoming a different native list. Collection and ordinary-child pages preserve their own stable key, page and official `ff` backlink through navigation-state reconstruction and pagination. No phone number, password, cookie, login, account API, SMS or write action was used for this research or these fixtures.

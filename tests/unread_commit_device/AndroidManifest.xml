@@ -1,0 +1,6 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="cn.ngapure.unreadcommitfixturev196">
+ <uses-sdk android:minSdkVersion="26" android:targetSdkVersion="35" />
+ <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+ <application android:label="NGA isolated unread commit test" android:allowBackup="false" android:usesCleartextTraffic="false" />
+ <instrumentation android:name="cn.ngapure.unreadcommitfixturev196.UnreadCommitProbe" android:targetPackage="cn.ngapure.unreadcommitfixturev196" android:label="Own UID unread baseline disk failure" />
+</manifest>

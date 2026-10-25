@@ -1,0 +1,67 @@
+{
+  "code": 0,
+  "result": [
+    {
+      "page": 1,
+      "next": 1,
+      "topics": [
+        {
+          "tid": 46635565,
+          "name": "异环",
+          "image": [
+            "https://img.nga.cn/attachments/mon_202604/24/fvQ2x-h1crZdT3cSzk-k0.webp"
+          ],
+          "type": [
+            {
+              "type_id": 1,
+              "name": "动作"
+            },
+            {
+              "type_id": 262144,
+              "name": "竞速"
+            }
+          ],
+          "release_info": [
+            {
+              "platform": "iOS",
+              "platform_id": 5,
+              "date": "2026-04-23"
+            },
+            {
+              "platform": "Android",
+              "platform_id": 6,
+              "date": "2026-04-23"
+            }
+          ],
+          "catid": 32,
+          "score": 7,
+          "score_count": 150
+        }
+      ],
+      "catid": 4
+    },
+    [
+      {
+        "catid": 1,
+        "name": "游戏推荐",
+        "fid": 0
+      },
+      {
+        "catid": 2,
+        "name": "传统游戏",
+        "fid": 573
+      },
+      {
+        "catid": 4,
+        "name": "手机游戏",
+        "fid": 571
+      },
+      {
+        "catid": 8,
+        "name": "影视",
+        "fid": 510475
+      }
+    ],
+    []
+  ]
+}

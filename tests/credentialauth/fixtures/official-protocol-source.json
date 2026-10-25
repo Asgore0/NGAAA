@@ -1,0 +1,13 @@
+{
+  "officialPage": "https://bbs.nga.cn/nuke/account_copy.html",
+  "fetchedAt": "2026-10-18",
+  "rawPageSha256": "0caf297c02c609ebf8c1350d5d4f2bd368aa2033264e33ccefbb3e6c1d72fbad",
+  "publicKeyDerSha256": "1d49cb2093d1577917a576910b23dea5c51053f47771696930a5a79acb5fe3cc",
+  "passwordAction": "login",
+  "smsSendAction": "smsloginsendcode",
+  "smsLoginAction": "smslogin",
+  "captchaBusinessId": "191458585",
+  "captchaAndroidDocumentation": "https://cloud.tencent.com/document/product/1110/49810",
+  "licenseScope": "Protocol field names and a published public encryption key; no third-party application implementation copied.",
+  "fixturesSynthetic": true
+}
