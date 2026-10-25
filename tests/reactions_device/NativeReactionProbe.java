@@ -40,7 +40,7 @@ public final class NativeReactionProbe extends Instrumentation {
     private Activity activity;
     private int assertionCount;
     private String stage = "guard";
-    private boolean authorized;
+    private boolean authorized, demoMode;
 
     private static final class Session implements NativeThreadActions.SessionSource {
         String cookie = "ngaPassportUid=190000001; ngaPassportCid=synthetic-reaction-fixture-only";
@@ -57,7 +57,7 @@ public final class NativeReactionProbe extends Instrumentation {
     private static final class Transport implements NativeThreadActions.Transport {
         final Queue<Object> replies = new ArrayDeque<>();
         final List<NativeThreadActions.Request> requests = new ArrayList<>();
-        Transport result(String json) { replies.add(new NativeThreadActions.Response(200, json.getBytes(StandardCharsets.UTF_8), "application/json; charset=UTF-8")); return this; }
+        Transport result(String json) { replies.add(new NativeThreadActions.Response(200, json.getBytes(StandardCharsets.UTF_8), json.startsWith("<html>") ? "text/html; charset=UTF-8" : "application/json; charset=UTF-8")); return this; }
         Transport disconnect() { replies.add(new IOException("synthetic disconnect; no socket exists")); return this; }
         @Override public NativeThreadActions.Response execute(NativeThreadActions.Request request) throws IOException {
             requests.add(request); Object result = replies.poll();
@@ -76,16 +76,22 @@ public final class NativeReactionProbe extends Instrumentation {
         final Worker worker = new Worker(); final Transport transport;
         final NativeThreadActionDialog owner; final NativeVoteBar bar;
         final AtomicInteger changed = new AtomicInteger();
+        final VoteMetrics.ConfirmedSelections selections = new VoteMetrics.ConfirmedSelections();
+        final NativeThreadActionDialog.ReactionListener listener;
         Fixture(Activity activity, boolean dark, Transport transport) {
             this.transport = transport;
             NativeThreadActions actions = new NativeThreadActions(session, transport, journal);
             owner = new NativeThreadActionDialog(activity, actions, worker, dark);
             bar = new NativeVoteBar(activity, dark);
-            bar.bind(new VoteMetrics(), () -> owner.showReaction("190000002", "0", 1, changed::incrementAndGet),
-                    () -> owner.showReaction("190000002", "0", -1, changed::incrementAndGet));
+            listener = result -> {
+                selections.confirmed("synthetic-scope", "190000002", "0", result.selectionKnown, result.selected);
+                bar.confirmedReaction(result); changed.incrementAndGet();
+            };
+            bar.bind(new VoteMetrics(), () -> owner.showReaction("190000002", "0", 1, listener),
+                    () -> owner.showReaction("190000002", "0", -1, listener));
         }
     }
-    @Override public void onCreate(Bundle args) { super.onCreate(args); authorized = args != null && "true".equals(args.getString("syntheticReactionsOnly")); start(); }
+    @Override public void onCreate(Bundle args) { super.onCreate(args); authorized = args != null && "true".equals(args.getString("syntheticReactionsOnly")); demoMode = args != null && "true".equals(args.getString("demoMode")); start(); }
     private <T> T main(Callable<T> action) throws Exception { FutureTask<T> task = new FutureTask<>(action); runOnMainSync(task); return task.get(10, TimeUnit.SECONDS); }
     private void check(String name, boolean value) throws Exception { assertionCount++; checks.put(name, value); if (!value) throw new AssertionError(name); }
     private static NativeGlassDialog active(Fixture fixture) throws Exception { Field field = NativeThreadActionDialog.class.getDeclaredField("active"); field.setAccessible(true); return (NativeGlassDialog) field.get(fixture.owner); }
@@ -94,7 +100,10 @@ public final class NativeReactionProbe extends Instrumentation {
         return main(() -> {
             Fixture fixture = new Fixture(activity, dark, transport); owners.add(fixture.owner);
             LinearLayout content = new LinearLayout(activity); content.setOrientation(LinearLayout.VERTICAL);
-            content.setPadding(dp(16), dp(16), dp(16), dp(16)); content.addView(fixture.bar, new LinearLayout.LayoutParams(-1, -2));
+            content.setPadding(dp(16), dp(16), dp(16), dp(16));
+            TextView banner = new TextView(activity); banner.setText("本机离线点赞回归 · 合成帖子");
+            banner.setTextSize(18); banner.setPadding(0, dp(16), 0, dp(24)); content.addView(banner);
+            content.addView(fixture.bar, new LinearLayout.LayoutParams(-1, -2));
             activity.setContentView(content); return fixture;
         });
     }
@@ -115,12 +124,18 @@ public final class NativeReactionProbe extends Instrumentation {
     /** Dialog delivers OnShow as a main-loop message; a user click necessarily follows that turn. */
     private void open(Fixture fixture, boolean up) throws Exception {
         main(() -> { target(fixture, up).performClick(); return null; });
-        waitForIdleSync();
+        waitForIdleSync(); demoPause();
     }
+    private void demoPause() throws Exception { if (demoMode) { waitForIdleSync(); Thread.sleep(1000); } }
 
+    private static String envelope(String json) {
+        return "<html><head><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'></head><body><script>window.script_muti_get_var_store=" + json + "</script></body></html>";
+    }
     private void buttonsAndConfirm() throws Exception {
         stage = "buttonsAndConfirm";
-        Fixture fixture = prepare(false, new Transport().result("{\"data\":[\"合成已点赞\",1,4]}"));
+        Fixture fixture = prepare(false, new Transport().result(envelope("{\"data\":[\"合成已点赞\",1,4]}"))
+                .result(envelope("{\"data\":[\"合成未更新选择\",0,0]}"))
+                .result(envelope("{\"data\":[\"合成撤销点赞\",-1,1]}")));
         check("unknownCountsHaveTwoIndependentLabels", main(() -> target(fixture, true).getText().toString().equals("点赞 —") && target(fixture, false).getText().toString().equals("点踩 —")));
         main(() -> { fixture.bar.counts(VoteMetrics.from(new JSONObject().put("recommend", 15))); return null; });
         check("scalarRecommendationNeverBecomesVisibleNetOrCount", main(() -> target(fixture, true).getText().toString().equals("点赞 —") && target(fixture, false).getText().toString().equals("点踩 —")));
@@ -144,9 +159,19 @@ public final class NativeReactionProbe extends Instrumentation {
         check("serverAcknowledgementDeliveredOnce", fixture.transport.requests.size() == 1 && fixture.changed.get() == 1 && fixture.journal.pending.isEmpty());
         Map<String, String> sent = args(fixture.transport.requests.get(0));
         check("officialLikeFieldsAndTopicHeadAreExact", sent.get("__lib").equals("topic_recommend") && sent.get("__act").equals("add") && sent.get("value").equals("1") && sent.get("tid").equals("190000002") && sent.get("pid").equals("0"));
-        check("acknowledgementNeverAddsNetDeltaToIndependentCounts", main(() -> target(fixture, true).getText().toString().equals("点赞 8") && target(fixture, false).getText().toString().equals("点踩 3")));
-        main(() -> { fixture.bar.counts(VoteMetrics.from(new JSONObject().put("recommend", "0,9,3"))); fixture.bar.selectedDirection(1); return null; });
-        check("readonlyFreshTupleAndConfirmedFlagsUpdateDistinctState", main(() -> target(fixture, true).getText().toString().equals("点赞 9") && target(fixture, false).getText().toString().equals("点踩 3") && target(fixture, true).isSelected() && !target(fixture, false).isSelected()));
+        check("acknowledgementInvalidatesTotalsWithoutGuessingFromDelta", main(() -> target(fixture, true).getText().toString().equals("点赞 —") && target(fixture, false).getText().toString().equals("点踩 —")));
+        demoPause();
+        check("productionListenerSelectsOriginalBarAndKeepsConfirmationVisible", main(() -> target(fixture, true).isSelected() && !target(fixture, false).isSelected() && active(fixture).isShowing() && text(active(fixture).getWindow().getDecorView(), "当前已点赞")));
+        main(() -> { fixture.bar.counts(VoteMetrics.from(new JSONObject().put("recommend", "0,9,3"))); return null; });
+        check("readonlyTupleRefreshRetainsAcknowledgedSelection", main(() -> target(fixture, true).getText().toString().equals("点赞 9") && target(fixture, false).getText().toString().equals("点踩 3") && target(fixture, true).isSelected()));
+        long beforeZero = fixture.selections.revision();
+        open(fixture, true);
+        main(() -> { active(fixture).getButton(DialogInterface.BUTTON_POSITIVE).performClick(); fixture.worker.complete(); return null; });
+        check("zeroFlagsPreservePreviousSelectionButInvalidateOldReads", main(() -> target(fixture, true).isSelected() && fixture.selections.selected("synthetic-scope", "190000002", "0") == 1 && !fixture.selections.accepts("synthetic-scope", beforeZero) && text(active(fixture).getWindow().getDecorView(), "请刷新核对当前状态")));
+        open(fixture, true);
+        main(() -> { active(fixture).getButton(DialogInterface.BUTTON_POSITIVE).performClick(); fixture.worker.complete(); return null; });
+        demoPause();
+        check("htmlRemovalAcknowledgementClearsSelectionThroughRealListener", main(() -> fixture.changed.get() == 3 && !target(fixture, true).isSelected() && !target(fixture, false).isSelected() && fixture.selections.selected("synthetic-scope", "190000002", "0") == 0 && text(active(fixture).getWindow().getDecorView(), "当前未点赞或点踩")));
         cancel(fixture);
     }
     private void dislikeAndSessionSwitch() throws Exception {
@@ -166,18 +191,33 @@ public final class NativeReactionProbe extends Instrumentation {
     }
     private void unknownAndRetiredUi() throws Exception {
         stage = "unknownAndRetiredUi";
-        Fixture unknown = prepare(false, new Transport().disconnect());
+        Fixture unknown = prepare(false, new Transport().disconnect().result(envelope("{\"data\":[\"合成已点踩\",-1,8]}")));
         open(unknown, true);
         main(() -> { active(unknown).getButton(DialogInterface.BUTTON_POSITIVE).performClick(); unknown.worker.complete(); return null; });
+        demoPause();
         check("unknownOutcomeIsDurablyGuarded", unknown.transport.requests.size() == 1 && unknown.journal.pending.size() == 1 && unknown.changed.get() == 0);
         check("unknownOutcomeDisablesRetryAndExplainsVerification", main(() -> !active(unknown).getButton(DialogInterface.BUTTON_POSITIVE).isEnabled() && text(active(unknown).getWindow().getDecorView(), "不会自动重试")));
         main(() -> { active(unknown).getButton(DialogInterface.BUTTON_POSITIVE).performClick(); return null; });
         check("disabledUnknownRetryDoesNotQueueAnotherRequest", unknown.worker.tasks.isEmpty() && unknown.transport.requests.size() == 1);
-        main(() -> { unknown.owner.showReaction("190000002", "0", -1, unknown.changed::incrementAndGet); return null; });
+        main(() -> { unknown.owner.showReaction("190000002", "0", -1, unknown.listener); return null; });
         waitForIdleSync();
         main(() -> { active(unknown).getButton(DialogInterface.BUTTON_POSITIVE).performClick(); unknown.worker.complete(); return null; });
         check("reopenedOppositeDirectionCannotRepeatUnknownWrite", unknown.transport.requests.size() == 1 && unknown.journal.pending.size() == 1 && unknown.changed.get() == 0);
         check("reopenedUnknownSheetAlsoDisablesSubmit", main(() -> !active(unknown).getButton(DialogInterface.BUTTON_POSITIVE).isEnabled()));
+        main(() -> { active(unknown).getWindow().getDecorView().findViewWithTag("reaction-recovery").performClick(); return null; });
+        waitForIdleSync();
+        demoPause();
+        check("recoveryExplainsLocalOnlyAndStillNeedsSeparateConfirmation", main(() -> text(active(unknown).getWindow().getDecorView(), "不会发送点赞或点踩")));
+        main(() -> { active(unknown).getButton(DialogInterface.BUTTON_POSITIVE).performClick(); return null; });
+        check("recoveryQueuesOnlyLocalGuardResolution", unknown.worker.tasks.size() == 1 && unknown.transport.requests.size() == 1);
+        main(() -> { unknown.worker.complete(); return null; });
+        waitForIdleSync();
+        demoPause();
+        check("resolvedGuardReopensConfirmationWithoutSending", unknown.journal.pending.isEmpty() && unknown.worker.tasks.isEmpty() && unknown.transport.requests.size() == 1 && unknown.changed.get() == 0);
+        check("newConfirmationIsExplicitAfterRecovery", main(() -> active(unknown).getButton(DialogInterface.BUTTON_POSITIVE).getText().toString().equals("确认点踩")));
+        main(() -> { active(unknown).getButton(DialogInterface.BUTTON_POSITIVE).performClick(); unknown.worker.complete(); return null; });
+        demoPause();
+        check("onlySecondExplicitConfirmationCanToggleAndUpdateBar", main(() -> unknown.transport.requests.size() == 2 && unknown.changed.get() == 1 && target(unknown, false).isSelected() && !target(unknown, true).isSelected()));
         cancel(unknown);
         Fixture retired = prepare(false, new Transport().result("{\"data\":[\"合成已点赞\",1,4]}"));
         open(retired, true);
@@ -223,7 +263,7 @@ public final class NativeReactionProbe extends Instrumentation {
             try { main(() -> { for (NativeThreadActionDialog owner : owners) owner.dismiss(); if (activity != null) activity.finish(); return null; }); }
             catch (Exception failure) { passed = false; }
             try {
-                report.put("passed", passed).put("assertions", assertionCount).put("checks", checks).put("fixtureRevision", 2).put("dialogOnShowMessageDrainedBeforeUserConfirmation", true).put("helperOwnUid", true)
+                report.put("passed", passed).put("assertions", assertionCount).put("checks", checks).put("fixtureRevision", 3).put("demoMode", demoMode).put("dialogOnShowMessageDrainedBeforeUserConfirmation", true).put("helperOwnUid", true)
                         .put("internetPermission", false).put("syntheticTransportOnly", true).put("realNetworkRequests", 0)
                         .put("realAccountAccessed", false).put("mainClientStarted", false).put("realCommunityMutationCount", 0);
             } catch (Exception ignored) { }

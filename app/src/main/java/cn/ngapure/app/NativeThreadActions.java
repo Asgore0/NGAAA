@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /** Native official post reactions, reports and thread polls. All network methods are blocking.
  * Protocol evidence: official js_read postScoreAdd, voteDefault/voteBet/vote.submit;
@@ -35,6 +37,8 @@ import java.util.Set;
 public final class NativeThreadActions {
     private static final Charset GB = Charset.forName("GB18030");
     private static final int LIMIT = 4 * 1024 * 1024;
+    // raw=3 is also served in this legacy document envelope. Accept only its inert data script.
+    private static final Pattern LEGACY_HTML = Pattern.compile("(?is)\\A<html>\\s*<head>\\s*<meta\\s+http-equiv=['\"]Content-Type['\"]\\s+content=['\"]text/html;\\s*charset=(?:GBK|GB18030|UTF-8)['\"]\\s*/?>\\s*</head>\\s*<body>\\s*<script>\\s*(window\\.script_m(?:uti|ulti)_get_var_store\\s*=.*?)\\s*</script>\\s*</body>\\s*</html>\\z");
     private static final Object WRITE_LOCK = new Object();
     private static final Set<String> IN_FLIGHT = new HashSet<>();
     private final SessionSource sessions;
@@ -57,8 +61,11 @@ public final class NativeThreadActions {
         public final int delta;
         /** +1 up, -1 down, 0 neither. Derived only from the official response flags. */
         public final int selected;
+        /** Zero flags leave the previous selection unchanged, as in the official client. */
+        public final boolean selectionKnown;
         private Reaction(String text, int delta, int flags) {
             message = text; this.delta = delta; selected = (flags & 4) != 0 ? 1 : (flags & 8) != 0 ? -1 : 0;
+            selectionKnown = flags != 0;
         }
     }
     /** Confirmation binds a reaction to the account and route which opened its sheet. */
@@ -177,6 +184,25 @@ public final class NativeThreadActions {
     public Reaction recommend(String tid, String pid, int direction) throws ActionException {
         return recommend(prepareReaction(tid, pid, direction));
     }
+    /** Local inspection only; does not retry an uncertain toggle. */
+    public boolean hasUnconfirmedReaction(ReactionDraft draft) throws ActionException {
+        String key = reactionKey(draft);
+        synchronized (WRITE_LOCK) { return journal.contains(key); }
+    }
+    /** Only call after the user explicitly confirms they have checked the earlier outcome.
+     * Clears this post's local guard, sends nothing, and still requires a new confirmation to submit. */
+    public void resolveReactionUncertainty(ReactionDraft draft) throws ActionException {
+        String key = reactionKey(draft);
+        synchronized (WRITE_LOCK) {
+            if (IN_FLIGHT.contains(key)) throw fail(Kind.BUSY, "操作仍在提交，请等待完成后再核对");
+            if (journal.contains(key) && !journal.remove(key)) throw fail(Kind.VALIDATION, "设备无法保存核对状态，请稍后重试");
+        }
+    }
+    private String reactionKey(ReactionDraft draft) throws ActionException {
+        if (draft == null || draft.owner != this) throw fail(Kind.VALIDATION, "请重新打开点赞或点踩面板");
+        Session s = session(true); verifyFingerprint(s, draft.fingerprint);
+        return key(s, "reaction", draft.tid, draft.pid);
+    }
     /** Clicking the same direction again invokes the official toggle, including removing a previous reaction. */
     public Reaction recommend(ReactionDraft draft) throws ActionException {
         if (draft == null || draft.owner != this) throw fail(Kind.VALIDATION, "请重新打开点赞或点踩面板");
@@ -195,10 +221,14 @@ public final class NativeThreadActions {
         String key = key(s, "reaction", draft.tid, draft.pid); begin(key);
         try {
             JSONObject root = exchange(s, "/nuke.php", args, true);
-            String message = acknowledged(root);
             int delta = exactInt(at(root.opt("data"), "1"), -100000, 100000, "推荐值变化");
             int flags = exactInt(at(root.opt("data"), "2"), 0, 15, "点赞状态");
             if ((flags & 12) == 12) throw unknown("服务器返回了冲突的点赞状态，请先刷新帖子核对", null);
+            Object rawMessage = at(root.opt("data"), "0");
+            if (rawMessage != null && rawMessage != JSONObject.NULL && !(rawMessage instanceof String))
+                throw unknown("服务器返回的操作提示格式无效，请先核对记录", null);
+            String message = rawMessage instanceof String ? clean((String) rawMessage) : "";
+            if (message.isEmpty()) message = (flags & 4) != 0 ? "已点赞" : (flags & 8) != 0 ? "已点踩" : flags != 0 ? "已撤销操作" : "操作已确认";
             verify(s); finish(key); synchronized (draft) { draft.submitted = true; } return new Reaction(message, delta, flags);
         } catch (ActionException e) { rejected(key, e); throw e; }
         finally { release(key); }
@@ -399,12 +429,17 @@ public final class NativeThreadActions {
         else try { raw = StandardCharsets.UTF_8.newDecoder().onMalformedInput(CodingErrorAction.REPORT).onUnmappableCharacter(CodingErrorAction.REPORT).decode(ByteBuffer.wrap(response.bytes)).toString(); }
         catch (CharacterCodingException invalid) { raw = new String(response.bytes, GB); }
         raw = raw.trim(); if (raw.startsWith("\uFEFF")) raw = raw.substring(1).trim();
+        if (raw.startsWith("<")) {
+            Matcher envelope = LEGACY_HTML.matcher(raw);
+            if (!envelope.matches()) throw new IOException("unrecognized HTML envelope");
+            raw = envelope.group(1).trim();
+        }
         if (raw.startsWith("/*$js$*/")) raw = raw.substring(8).trim();
         raw = raw.replaceFirst("^window\\.script_m(?:uti|ulti)_get_var_store\\s*=\\s*", "");
         if (!raw.startsWith("{")) throw new IOException("object required");
         JSONTokener tokener = new JSONTokener(raw); Object decoded = tokener.nextValue(); StringBuilder tail = new StringBuilder(); char c;
         while ((c = tokener.next()) != 0) tail.append(c);
-        if (!(decoded instanceof JSONObject) || !tail.toString().trim().matches(";?\\s*(?:/\\*error fill content[\\s\\S]*\\*/\\s*)?")) throw new IOException("trailing script");
+        if (!(decoded instanceof JSONObject) || !tail.toString().trim().matches(";?\\s*(?:/\\*error fill content(?:(?!\\*/)[\\s\\S])*\\*/\\s*)?")) throw new IOException("trailing script");
         return (JSONObject) decoded;
     }
     private static Map<String, String> api(String lib, String action) {
@@ -432,6 +467,7 @@ public final class NativeThreadActions {
     }
     private static int exactInt(Object raw, int min, int max, String label) throws ActionException {
         if (!(raw instanceof String || raw instanceof Number)) throw unknown("服务器未返回可核验的" + label, null);
+        if (String.valueOf(raw).isEmpty()) throw unknown("服务器未返回可核验的" + label, null);
         try { return (int) number(String.valueOf(raw), Long.MIN_VALUE, min, max, label); }
         catch (ActionException invalid) { throw unknown("服务器返回的" + label + "无效，请先刷新核对", invalid); }
     }

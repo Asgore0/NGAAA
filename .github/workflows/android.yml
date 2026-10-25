@@ -41,7 +41,7 @@ jobs:
         run: bash build-local.sh
       - name: Run offline regression suites
         run: |
-          for suite in renderer api api/checkin session_scopes loginprefs checkin_service startup_tasks favorite_sync favorite_auto favorite_startup forum_response_cache forum_early_read forum_list screenreads; do
+          for suite in renderer api api/checkin session_scopes loginprefs checkin_service startup_tasks favorite_sync favorite_auto favorite_startup forum_response_cache forum_early_read forum_list screenreads thread_actions votes_state community forum_return topic_previews; do
             bash scripts/test.sh "$suite"
           done
       - name: Verify published performance calculations

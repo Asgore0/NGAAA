@@ -79,6 +79,67 @@ public final class ThreadActionsFixtureTest {
         s.testCookie = ""; error(Kind.NOT_LOGGED_IN, () -> a.recommend("1", "0", 1));
         s.testCookie = "a=b"; s.testHost = "bbs.nga.cn.evil.example"; error(Kind.VALIDATION, () -> a.recommend("1", "0", 1));
     }
+    private static String legacy(String data) {
+        return "<html><head><meta http-equiv='Content-Type' content='text/html; charset=GBK'></head><body><script>window.script_muti_get_var_store=" + data + "</script></body></html>";
+    }
+    private static void legacyReactionEnvelopes() throws Exception {
+        // Exact envelope independently observed with an anonymous, action-free official request.
+        for (String data : new String[]{"{\"data\":[\"\",1,4]}", "{\"data\":[null,-1,8]}", "{\"data\":{\"1\":-1,\"2\":1}}", "{\"data\":[\"提示\",0,0]}"}) {
+            for (boolean html : new boolean[]{false, true}) {
+                Journal journal = new Journal(); Transport transport = new Transport().gb(html ? legacy(data) : data);
+                NativeThreadActions.Reaction result = api(new NgaStore(), transport, journal).recommend("101", "0", 1);
+                check(!result.message.isEmpty() && journal.pending.isEmpty(), "Optional text never rejects verified flags/delta in JSON or HTML");
+                check(result.selectionKnown == !data.contains("提示"), "Zero flags preserve previous selection rather than clearing it");
+            }
+        }
+        Journal rejected = new Journal(); Transport error = new Transport().gb(legacy("{\"error\":{\"0\":\"没有操作权限\"}}"));
+        check(error(Kind.PERMISSION, () -> api(new NgaStore(), error, rejected).recommend("101", "1", 1)).getMessage().contains("没有操作权限"), "HTML rejection exposes actual server message");
+        check(rejected.pending.isEmpty(), "An explicit HTML rejection never permanently blocks this floor");
+        String valid = legacy("{\"data\":[\"已点赞\",1,4]}");
+        String[] malformed = {valid + "<script>alert(1)</script>", valid.replace("</script>", ";alert(1)</script>"),
+                valid.replace("<body>", "<body><script>other()</script>"), valid.replace("window.script_muti_get_var_store=", "other="),
+                valid.replace("<script>", "<script src='https://example.invalid/x.js'>"), "<html>安全验证</html>",
+                "{\"data\":[\"success\",\"\",4]}", "{\"data\":[\"success\",1,\"\"]}", "{\"data\":[{},1,4]}",
+                "{\"data\":[\"success\",1,4]};/*error fill content*/alert(1)/* padding */"};
+        for (String raw : malformed) {
+            Journal journal = new Journal(); Transport transport = new Transport().gb(raw);
+            error(Kind.OUTCOME_UNKNOWN, () -> api(new NgaStore(), transport, journal).recommend("102", "0", 1));
+            check(journal.pending.size() == 1 && transport.requests.size() == 1, "Unrecognized scripts or malformed confirmations remain guarded");
+        }
+    }
+    private static void explicitReactionRecovery() throws Exception {
+        NgaStore store = new NgaStore(); Journal journal = new Journal();
+        Transport transport = new Transport().failure().json("{\"data\":[\"恢复后确认\",1,4]}");
+        NativeThreadActions api = api(store, transport, journal);
+        NativeThreadActions.ReactionDraft draft = api.prepareReaction("700", "701", 1);
+        check(!api.hasUnconfirmedReaction(draft), "Fresh confirmation has no uncertain predecessor");
+        error(Kind.OUTCOME_UNKNOWN, () -> api.recommend(draft));
+        check(api.hasUnconfirmedReaction(draft), "Disconnect leaves an inspectable recovery marker");
+        NativeThreadActions reopened = api(store, transport, journal);
+        NativeThreadActions.ReactionDraft recovery = reopened.prepareReaction("700", "701", -1);
+        error(Kind.OUTCOME_UNKNOWN, () -> reopened.recommend(recovery));
+        check(transport.requests.size() == 1, "Opening or submitting before recovery never repeats an unknown toggle");
+        String original = store.testCookie; store.testCookie = "ngaPassportUid=999; ngaPassportCid=synthetic-other";
+        error(Kind.SESSION_CHANGED, () -> reopened.resolveReactionUncertainty(recovery));
+        check(journal.pending.size() == 1, "Account change cannot discard original-account marker"); store.testCookie = original;
+        journal.writable = false; error(Kind.VALIDATION, () -> reopened.resolveReactionUncertainty(recovery));
+        check(journal.pending.size() == 1, "Failed recovery save leaves protection intact"); journal.writable = true;
+        error(Kind.VALIDATION, () -> api.resolveReactionUncertainty(recovery));
+        reopened.resolveReactionUncertainty(recovery);
+        check(!reopened.hasUnconfirmedReaction(recovery) && transport.requests.size() == 1, "Explicit recovery only clears local guard and never dispatches");
+        check(reopened.recommend(reopened.prepareReaction("700", "701", 1)).selected == 1 && transport.requests.size() == 2, "Separate new confirmation can submit exactly once after recovery");
+        NativeThreadActions.ReactionDraft busy = reopened.prepareReaction("702", "0", 1);
+        transport.json("{\"data\":[\"已点赞\",1,4]}");
+        transport.after = () -> { try { error(Kind.BUSY, () -> reopened.resolveReactionUncertainty(busy)); } catch (Exception e) { throw new AssertionError(e); } };
+        reopened.recommend(busy);
+        check(journal.pending.isEmpty(), "Recovery cannot clear an in-flight submission marker");
+        Transport two = new Transport().failure().failure(); Journal twoJournal = new Journal(); NativeThreadActions twoApi = api(store, two, twoJournal);
+        NativeThreadActions.ReactionDraft first = twoApi.prepareReaction("800", "0", 1), second = twoApi.prepareReaction("800", "801", 1);
+        error(Kind.OUTCOME_UNKNOWN, () -> twoApi.recommend(first)); error(Kind.OUTCOME_UNKNOWN, () -> twoApi.recommend(second));
+        twoApi.resolveReactionUncertainty(first);
+        check(!twoApi.hasUnconfirmedReaction(first) && twoApi.hasUnconfirmedReaction(second) && two.requests.size() == 2,
+                "Recovering the original post cannot clear another floor's pending guard or send a request");
+    }
     private static void reactionConfirmationScope() throws Exception {
         NgaStore store = new NgaStore(); Journal journal = new Journal();
         Transport transport = new Transport().json("{\"data\":[\"已点踩\",-1,8]}");
@@ -235,7 +296,7 @@ public final class ThreadActionsFixtureTest {
         current[0].recommend("8", "0", 1); check(duplicate.requests.size() == 1 && guard.pending.isEmpty(), "Duplicate in-flight tap cannot dispatch another mutation");
     }
     public static void main(String[] args) throws Exception {
-        reactions(); reactionConfirmationScope(); unknownResults(); errorsAndScope(); reports(); polls(); groupedBetAndScope(); writeGuardsAndDuplicateTap();
+        reactions(); legacyReactionEnvelopes(); explicitReactionRecovery(); reactionConfirmationScope(); unknownResults(); errorsAndScope(); reports(); polls(); groupedBetAndScope(); writeGuardsAndDuplicateTap();
         System.out.println("Native thread actions: " + checks + " offline assertions passed; no sockets opened, no real reactions/reports/votes submitted.");
     }
 }

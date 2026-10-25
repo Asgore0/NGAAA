@@ -3,6 +3,7 @@ package cn.ngapure.app;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -23,6 +24,70 @@ public final class VoteMetrics {
         value.likesKnown = likesKnown; value.dislikesKnown = dislikesKnown; value.scoreKnown = scoreKnown;
         value.likes = likes; value.dislikes = dislikes; value.score = score;
         return value;
+    }
+
+    /** A supplemental read may add exact totals, but a net-only row cannot erase them. */
+    public VoteMetrics supplementedBy(VoteMetrics incoming) {
+        VoteMetrics result = copy();
+        if (incoming == null) return result;
+        if (incoming.likesKnown) { result.likesKnown = true; result.likes = incoming.likes; }
+        if (incoming.dislikesKnown) { result.dislikesKnown = true; result.dislikes = incoming.dislikes; }
+        if (incoming.scoreKnown) { result.scoreKnown = true; result.score = incoming.score; }
+        return result;
+    }
+
+    /** UI-thread state: confirmed flags and a derived session scope, never credentials.
+     * A revision invalidates reads started before an acknowledgement, even with zero flags.
+     * Counts are not retained here: a write makes that floor's old totals stale. */
+    public static final class ConfirmedSelections {
+        private static final int LIMIT = 128;
+        private final LinkedHashMap<String, Integer> values = new LinkedHashMap<>();
+        private String scope = "";
+        private long revision;
+        public void useScope(String value) {
+            String next = value == null ? "" : value;
+            if (!scope.equals(next)) { scope = next; values.clear(); revision++; }
+        }
+        public long revision() { return revision; }
+        public int selected(String currentScope, String tid, String pid) {
+            useScope(currentScope); Integer value = values.get(tid + ":" + pid);
+            return value == null ? 0 : value;
+        }
+        public void confirmed(String currentScope, String tid, String pid, boolean known, int direction) {
+            if (!validId(tid, false) || !validId(pid, true) || direction < -1 || direction > 1)
+                throw new IllegalArgumentException("Invalid confirmed reaction");
+            useScope(currentScope); revision++;
+            if (!known) return;
+            String key = tid + ":" + pid; values.remove(key); values.put(key, direction);
+            while (values.size() > LIMIT) values.remove(values.keySet().iterator().next());
+        }
+        public boolean accepts(String currentScope, long readRevision) {
+            return scope.equals(currentScope) && revision == readRevision;
+        }
+        public String[] encode(String currentScope) {
+            useScope(currentScope); ArrayList<String> result = new ArrayList<>(); result.add(scope);
+            for (Map.Entry<String, Integer> entry : values.entrySet()) {
+                String[] route = entry.getKey().split(":");
+                result.add(route[0]); result.add(route[1]); result.add(String.valueOf(entry.getValue()));
+            }
+            return result.toArray(new String[0]);
+        }
+        public void restore(String currentScope, Object encoded) {
+            useScope(currentScope); values.clear(); revision++;
+            if (!(encoded instanceof String[])) return;
+            String[] parts = (String[]) encoded;
+            if (parts.length < 1 || parts.length > 1 + LIMIT * 3 || (parts.length - 1) % 3 != 0 || !scope.equals(parts[0])) return;
+            LinkedHashMap<String, Integer> restored = new LinkedHashMap<>();
+            for (int i = 1; i < parts.length; i += 3) {
+                if (!validId(parts[i], false) || !validId(parts[i + 1], true)
+                        || !("-1".equals(parts[i + 2]) || "0".equals(parts[i + 2]) || "1".equals(parts[i + 2]))) return;
+                if (restored.put(parts[i] + ":" + parts[i + 1], Integer.valueOf(parts[i + 2])) != null) return;
+            }
+            values.putAll(restored);
+        }
+        private static boolean validId(String value, boolean zero) {
+            return value != null && (zero && "0".equals(value) || value.matches("[1-9][0-9]{0,17}"));
+        }
     }
 
     /** Official js_read postArg accepts recommend as either a net number or "value,support,oppose". */

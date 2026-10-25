@@ -33,11 +33,21 @@ public final class NativeVoteBar extends LinearLayout {
 
     /** Callers own route/account guards and the explicit confirmation sheet. */
     public void bind(VoteMetrics value, Runnable onLike, Runnable onDislike) {
-        counts(value); selectedDirection(0);
+        bind(value, onLike, onDislike, 0);
+    }
+    public void bind(VoteMetrics value, Runnable onLike, Runnable onDislike, int confirmedDirection) {
+        counts(value); selectedDirection(confirmedDirection);
         like.setOnClickListener(onLike == null ? null : view -> onLike.run());
         dislike.setOnClickListener(onDislike == null ? null : view -> onDislike.run());
         like.setEnabled(onLike != null); dislike.setEnabled(onDislike != null);
         like.setAlpha(onLike == null ? .6f : 1f); dislike.setAlpha(onDislike == null ? .6f : 1f);
+    }
+
+    /** Apply the actual acknowledgement. Net deltas cannot give separate totals. */
+    public void confirmedReaction(NativeThreadActions.Reaction result) {
+        if (result == null) return;
+        counts(null);
+        if (result.selectionKnown) selectedDirection(result.selected);
     }
 
     /** Uses exact support/oppose totals only. A recommendation delta cannot update these totals. */

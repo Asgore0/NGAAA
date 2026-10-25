@@ -122,6 +122,10 @@ public final class MainActivity extends Activity {
     private NativeActivitiesView activitiesView;
     private NativeThreadActions threadActions;
     private NativeThreadActionDialog threadSheets;
+    private final VoteMetrics.ConfirmedSelections reactionSelections=new VoteMetrics.ConfirmedSelections();
+    private final Map<String,NativeVoteBar> readerVoteViews=new HashMap<>();
+    private NgaApi.ThreadPage readerThreadPage;
+    private static final String REACTION_SELECTION_STATE="confirmed_reaction_selections_v1";
     private NativeUserActionDialogs userSheets;
     private AvatarPickerState avatarPicker;
     private NativeUserActions.UserFilter userFilter;
@@ -294,6 +298,7 @@ public final class MainActivity extends Activity {
         final NativeQrRecoveryStore authorizationRecovery=new NativeQrRecoveryStore(this);
         final SharedPreferences directoryUi=getSharedPreferences("nga_board_directory_ui",MODE_PRIVATE);
         final NgaStore.CheckInSession initialSession=store.captureCheckInSession();forumResponseCache=new ForumResponseCache(this);readingProgress=new ReadingProgress(this);boardVisits=new BoardVisits(this); api = new NgaApi(this);topicPreviewImages=new TopicPreviewImages((scope,tid)->api.firstPostImages(tid,scope),task->navigationHandler.post(task));threadActions=new NativeThreadActions(this);activeContentScope=contentScope();activeDirectoryScope=localDataScope();
+        reactionSelections.restore(activeContentScope,state==null?null:stateValue(state,REACTION_SELECTION_STATE));
         try{communityGrid=directoryUi.getBoolean("grid",true);}catch(ClassCastException malformed){communityGrid=true;}
         sessionPreferences=getApplicationContext().getSharedPreferences("nga_local",MODE_PRIVATE);sessionPreferences.registerOnSharedPreferenceChangeListener(sessionObserver);
         favoriteCoordinator=ForumFavoritesCoordinator.get(this);favoriteWrites=favoriteCoordinator.executor();
@@ -385,6 +390,7 @@ public final class MainActivity extends Activity {
         }
     }
     @Override public void onSaveInstanceState(Bundle b) { super.onSaveInstanceState(b); b.putInt("tab",homeTab); b.putInt("mainTab",mainTab); // Save the rendered tab together with its own scroll offset.
+        if(store!=null)b.putStringArray(REACTION_SELECTION_STATE,reactionSelections.encode(contentScope()));
         captureCatalogPosition();b.putStringArray(HOME_SCREEN_STATE,HomeScreenState.capture(ratingCategory,ratingPage,communityCategory,communityQuery,communityPosition,communityOffset).encode());
         if(!communityAnchorKey.isEmpty())b.putStringArray(BOARD_DIRECTORY_ANCHOR_STATE,new String[]{communityAnchorKey,communityAnchorIdentity});
         if(avatarPicker!=null)b.putStringArray(AVATAR_PICKER_STATE,avatarPicker.encode());
@@ -533,7 +539,7 @@ public final class MainActivity extends Activity {
         if(activeForumRead!=null){activeForumRead.delivery.cancel();activeForumRead=null;}
         cancelDirectoryFilter();directoryFilterTask=null;forumList=null;forumListOwner=null;
         for(TopicPreviewView preview:new ArrayList<>(topicPreviews))preview.close();topicPreviews.clear();if(topicPreviewImages!=null)topicPreviewImages.cancelAll();
-        threadLoaded=false;loadedReadingScope="";
+        threadLoaded=false;loadedReadingScope="";readerThreadPage=null;readerVoteViews.clear();
         nativePostCount=0;nativeVoteCount=0;nativeDisplayedVoteCount=0;nativeChildForumCount=0;nativeForumTopicCount=-1;
         nativeForumSource="none";nativeForumCacheAgeMs=0;nativeForumRequestNanos=0;nativeForumHeadersNanos=0;nativeForumBodyNanos=0;nativeForumParsedNanos=0;nativeForumRequests=0;nativeForumResponseBytes=0;
         if(pictureRequest!=null){pictureRequest.cancel();pictureRequest=null;}
@@ -570,7 +576,7 @@ public final class MainActivity extends Activity {
         clearFavoritePageBindings();
         String localScope=localDataScope();if(!localScope.equals(activeDirectoryScope)){resetDirectoryPosition();activeDirectoryScope=localScope;}
         // Bindings were cleared above; the new screen must own any asynchronous favorite refresh.
-        String scope=contentScope();if(!scope.equals(activeContentScope)){s.forumAnchor=null;for(Screen retained:back)retained.forumAnchor=null;clearForumData();readingPositions.clear();refreshHomeTopics();activeContentScope=scope;store.activateFavoriteScope(favoriteScope());favoriteCoordinator.requestRefresh(true);configureAuthorAvatars();}
+        String scope=contentScope();reactionSelections.useScope(scope);if(!scope.equals(activeContentScope)){s.forumAnchor=null;for(Screen retained:back)retained.forumAnchor=null;clearForumData();readingPositions.clear();refreshHomeTopics();activeContentScope=scope;store.activateFavoriteScope(favoriteScope());favoriteCoordinator.requestRefresh(true);configureAuthorAvatars();}
         if(push&&current!=null){back.push(current);while(back.size()>NavigationState.MAX_BACK)back.removeLast();}
         current=s;ArrayList<Screen> retainedForums=new ArrayList<>(back);retainedForums.add(current);forumSnapshots.retain(retainedForums,SystemClock.elapsedRealtime());
         generation++;userFilterRevision++;closeNativePage();
@@ -1442,8 +1448,8 @@ public final class MainActivity extends Activity {
                 TextView sub=text(findForum(page.fid)[1]+(s.extra.isEmpty()?"":" · 只看楼主")+" · 第 "+page.page+" 页",11,muted);sub.setPadding(dp(28),0,dp(28),dp(12));l.addView(sub);
                 if(store.motionEnabled())Motion.enter(l);
                 if(s.topic==null){s.topic=new NgaApi.Topic();s.topic.tid=s.id;s.topic.title=page.title;s.topic.fid=page.fid;}if(!page.fid.isEmpty())s.topic.fid=page.fid;if(!page.title.isEmpty())s.topic.title=page.title;if(!page.authorId.isEmpty())s.topic.authorId=page.authorId;store.recordHistory(s.topic);
-                readerAccountId=store.accountId();final HashMap<String,NativeVoteBar> voteViews=new HashMap<>();boolean needsVotes=false;nativePostCount=page.posts.size();nativeVoteCount=0;nativeDisplayedVoteCount=0;
-                for(NgaApi.Post post:page.posts){int index=l.getChildCount();NativeVoteBar votes=postRow(l,post);voteViews.put(post.floor+":"+post.pid,votes);boolean known=post.votes.countsKnown();needsVotes|=!known;if(known)nativeDisplayedVoteCount++;if(post.votes.likesKnown)nativeVoteCount++;if(locatePid&&s.pid.equals(post.pid))locatePostAfterLayout(l,l.getChildAt(index),currentScroll,token);}
+                readerAccountId=store.accountId();readerThreadPage=page;readerVoteViews.clear();final Map<String,NativeVoteBar> voteViews=readerVoteViews;boolean needsVotes=false;nativePostCount=page.posts.size();nativeVoteCount=0;nativeDisplayedVoteCount=0;
+                for(NgaApi.Post post:page.posts){int index=l.getChildCount();NativeVoteBar votes=postRow(l,post);if(votes!=null)voteViews.put(post.floor+":"+post.pid,votes);boolean known=post.votes.countsKnown();needsVotes|=!known;if(known)nativeDisplayedVoteCount++;if(post.votes.likesKnown)nativeVoteCount++;if(locatePid&&s.pid.equals(post.pid))locatePostAfterLayout(l,l.getChildAt(index),currentScroll,token);}
                 if(needsVotes)loadPostVotes(s,page,voteViews,token);
                 LinearLayout nav=horizontal();nav.setPadding(dp(16),dp(16),dp(16),dp(12));
                 if(s.page>1)nav.addView(button("‹ 上一页",()->threadPage(s,s.page-1)),new LinearLayout.LayoutParams(0,-2,1));
@@ -1491,14 +1497,21 @@ public final class MainActivity extends Activity {
     }
     /** One page-sized data read after the native body appears; never a request for each floor or list row. */
     private void loadPostVotes(Screen screen,NgaApi.ThreadPage page,Map<String,NativeVoteBar> labels,int token){
-        final int resolvedPage=page.page;
+        final int resolvedPage=page.page;final String scope=contentScope();
+        reactionSelections.useScope(scope);final long revision=reactionSelections.revision();
         pageReads.execute(()->{if(token!=generation)return;try{
             Map<String,VoteMetrics> values=api.postVotes(screen.id,resolvedPage,screen.extra);
-            runOnUiThread(()->{if(token!=generation||current!=screen||isDestroyed())return;
-                for(NgaApi.Post post:page.posts){String key=post.floor+":"+post.pid;VoteMetrics value=values.get(key);NativeVoteBar label=labels.get(key);if(value!=null&&label!=null){post.votes=value;label.counts(value);}}
-                int known=0,displayed=0;for(NgaApi.Post post:page.posts){if(post.votes.likesKnown)known++;if(post.votes.countsKnown())displayed++;}nativeVoteCount=known;nativeDisplayedVoteCount=displayed;
+            runOnUiThread(()->{if(token!=generation||current!=screen||readerThreadPage!=page||isDestroyed()
+                    ||!scope.equals(contentScope())||!reactionSelections.accepts(scope,revision))return;
+                for(NgaApi.Post post:page.posts){String key=post.floor+":"+post.pid;VoteMetrics value=values.get(key);
+                    if(value!=null){post.votes=post.votes.supplementedBy(value);NativeVoteBar label=labels.get(key);if(label!=null)label.counts(post.votes);}}
+                updateReaderVoteDiagnostics(page);
             });
-        }catch(Exception unavailable){ /* Keep the explicit unknown count; a read failure is never a zero vote. */ }});
+        }catch(Exception unavailable){ /* A failed or net-only read cannot fabricate independent totals. */ }});
+    }
+    private void updateReaderVoteDiagnostics(NgaApi.ThreadPage page){
+        int known=0,displayed=0;for(NgaApi.Post post:page.posts){if(post.votes.likesKnown)known++;if(post.votes.countsKnown())displayed++;}
+        nativeVoteCount=known;nativeDisplayedVoteCount=displayed;
     }
     private final class PostCard extends LinearLayout{
         final int floor;
@@ -1508,7 +1521,7 @@ public final class MainActivity extends Activity {
     private NativeVoteBar postRow(LinearLayout list,NgaApi.Post post,boolean reveal) {
         if(!reveal&&userFilter!=null&&userFilter.blocks(post.authorId,post.author,post.content)){
             PostCard hidden=new PostCard(post.floor);LinearLayout.LayoutParams hp=new LinearLayout.LayoutParams(-1,-2);hp.setMargins(dp(12),0,dp(12),dp(10));hidden.setPadding(dp(16),dp(12),dp(16),dp(12));list.addView(hidden,hp);
-            hidden.addView(text((post.floor==0?"楼主":"#"+post.floor)+" · 已按屏蔽规则隐藏",13,muted));hidden.addView(button("临时显示这层",()->{int index=list.indexOfChild(hidden);list.removeView(hidden);postRow(list,post,true);View actual=list.getChildAt(list.getChildCount()-1);list.removeView(actual);list.addView(actual,index);}));return new NativeVoteBar(this,dark);
+            hidden.addView(text((post.floor==0?"楼主":"#"+post.floor)+" · 已按屏蔽规则隐藏",13,muted));hidden.addView(button("临时显示这层",()->{int index=list.indexOfChild(hidden);list.removeView(hidden);postRow(list,post,true);View actual=list.getChildAt(list.getChildCount()-1);list.removeView(actual);list.addView(actual,index);}));return null;
         }
         PostCard card=new PostCard(post.floor);LinearLayout.LayoutParams cardParams=new LinearLayout.LayoutParams(-1,-2);cardParams.setMargins(dp(12),0,dp(12),dp(10));list.addView(card,cardParams);
         LinearLayout header=horizontal();header.setPadding(dp(12),dp(10),dp(16),dp(6));
@@ -1519,9 +1532,9 @@ public final class MainActivity extends Activity {
         header.addView(authorTarget,new LinearLayout.LayoutParams(0,-2,1));TextView floor=text(post.floor==0?"楼主":"#"+post.floor,11,post.floor==0?gold:muted);floor.setPadding(dp(8),dp(5),dp(8),dp(5));if(post.floor==0)floor.setBackground(shape(palette.selectionFill,8));header.addView(floor);card.addView(header);
         if(post.authorId.matches("[1-9][0-9]*")){authorTarget.setContentDescription("查看 "+name+" 的资料");authorTarget.setOnClickListener(v->nativeGo("user",post.authorId,name,1));}
         NativeRichText content=new NativeRichText(this,nativeImages,post.content,dark,store.fontSize(),this::handleLink,post.authorId,current.id,post.pid);content.setPadding(dp(16),dp(2),dp(16),dp(8));card.addView(content,new LinearLayout.LayoutParams(-1,-2));
-        LinearLayout actions=horizontal();actions.setTag("post-actions");actions.setMinimumHeight(dp(48));actions.setPadding(dp(16),0,dp(4),dp(4));NativeVoteBar votes=new NativeVoteBar(this,dark);final Screen owner=current;final String scope=contentScope();votes.bind(post.votes,()->{if(current==owner&&scope.equals(contentScope()))react(post,1);},()->{if(current==owner&&scope.equals(contentScope()))react(post,-1);});View spacer=new View(this);actions.addView(spacer,new LinearLayout.LayoutParams(0,1,1));
+        LinearLayout actions=horizontal();actions.setTag("post-actions");actions.setMinimumHeight(dp(48));actions.setPadding(dp(16),0,dp(4),dp(4));NativeVoteBar votes=new NativeVoteBar(this,dark);final Screen owner=current;final String scope=contentScope();votes.bind(post.votes,()->{if(current==owner&&scope.equals(contentScope()))react(post,1);},()->{if(current==owner&&scope.equals(contentScope()))react(post,-1);},reactionSelections.selected(scope,owner==null?"":owner.id,post.pid));View spacer=new View(this);actions.addView(spacer,new LinearLayout.LayoutParams(0,1,1));
         TextView quote=text("引用回复",13,gold);quote.setGravity(Gravity.CENTER);quote.setPadding(dp(12),0,dp(12),0);quote.setBackground(new RippleDrawable(android.content.res.ColorStateList.valueOf(palette.ripple),shape(Color.TRANSPARENT,12),null));quote.setOnClickListener(v->openEditor("quote",current.topic==null?"":current.topic.fid,current.id,post.pid));actions.addView(quote,new LinearLayout.LayoutParams(-2,dp(48)));
-        actions.addView(icon("more","更多楼层操作",muted,()->postActions(post)),new LinearLayout.LayoutParams(dp(48),dp(48)));card.addView(new PostActionRow(votes,actions),new LinearLayout.LayoutParams(-1,-2));return votes;
+        actions.addView(icon("more","更多楼层操作",muted,()->postActions(post)),new LinearLayout.LayoutParams(dp(48),dp(48)));card.addView(new PostActionRow(votes,actions),new LinearLayout.LayoutParams(-1,-2));if(readerThreadPage!=null&&owner!=null&&owner.id.equals(readerThreadPage.tid))readerVoteViews.put(post.floor+":"+post.pid,votes);return votes;
     }
     private final class PostActionRow extends LinearLayout{
         final NativeVoteBar votes;final LinearLayout actions;boolean compact;
@@ -1882,7 +1895,19 @@ public final class MainActivity extends Activity {
         });
     }
     private NativeThreadActionDialog threadSheets(){if(threadSheets==null)threadSheets=new NativeThreadActionDialog(this,threadActions,io,dark);return threadSheets;}
-    private void react(NgaApi.Post post,int direction){if(!store.loggedIn()){login();return;}final Screen owner=current;threadSheets().showReaction(owner.id,post.pid,direction,()->{clearForumData();if(current==owner)go(owner,false);});}
+    private void react(NgaApi.Post post,int direction){
+        if(!store.loggedIn()){login();return;}
+        final Screen owner=current;final int token=generation;final String scope=contentScope();
+        threadSheets().showReaction(owner.id,post.pid,direction,(NativeThreadActionDialog.ReactionListener)result->{
+            if(current!=owner||token!=generation||isDestroyed()||!scope.equals(contentScope()))return;
+            reactionSelections.confirmed(scope,owner.id,post.pid,result.selectionKnown,result.selected);
+            // Keep the actual row and scroll position. A net delta cannot update either independent total.
+            post.votes=new VoteMetrics();NativeVoteBar bar=readerVoteViews.get(post.floor+":"+post.pid);
+            if(bar!=null)bar.confirmedReaction(result);
+            clearForumData();
+            if(readerThreadPage!=null){updateReaderVoteDiagnostics(readerThreadPage);loadPostVotes(owner,readerThreadPage,readerVoteViews,token);}
+        });
+    }
     private NativeUserActionDialogs userSheets(){if(userSheets==null)userSheets=new NativeUserActionDialogs(this,dark,io,NativeUserWrites.executor(),new NativeUserActionDialogs.Host(){
         public void changed(){if(current!=null)go(current,false);}
         public void openUser(String uid,String name){nativeGo("user",uid,name,1);}

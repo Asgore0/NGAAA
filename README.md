@@ -2,7 +2,7 @@
 
 无广告 SDK 的原生 Android NGA 社区客户端。界面以 Android View、Canvas 和平台媒体组件构建，包含固定玻璃材质、跟手底部胶囊、深色模式与折叠窗口适配。论坛阅读页面不是网页套壳；官方安全验证码仍使用独立受限 WebView。
 
-**当前源码：0.20.13（versionCode 47），已于 2026-10-25 通过本地预设的三轮性能门槛。** 对比 0.20.12，指定模拟器中保留登录态、清空应用缓存的板块首屏中位数分别缩短 8.38%、17.02%、13.02%；21 对启动中 17 对更快。验证范围与限制见 [0.20.13 说明](docs/NATIVE-0.20.13.md)。
+**当前源码：0.20.14（versionCode 48）。** 修复点赞响应格式解析、结果不明后无法恢复、成功后整页刷新丢失选中状态的问题。验证范围见 [0.20.14 说明](docs/NATIVE-0.20.14.md)；此前启动性能对比保留在 [0.20.13 说明](docs/NATIVE-0.20.13.md)。
 
 安装包见 [Releases](https://github.com/Asgore0/NGAAA/releases)，自动构建见 [Actions](https://github.com/Asgore0/NGAAA/actions)。本轮未重新验收所有线上操作；实测范围与环境限制已记入版本说明。
 
@@ -29,7 +29,7 @@ bash build-local.sh --check
 bash build-local.sh
 ```
 
-默认输出 `dist/NGAAA-0.20.13-debug.apk`。SDK 构建不需要 Gradle 或网络下载；签名在仓库外保存。自行生成的密钥不能覆盖安装其他签名版本。自有签名和 Android Studio 构建见 [构建说明](docs/BUILDING.md)。
+默认输出 `dist/NGAAA-0.20.14-debug.apk`。SDK 构建不需要 Gradle 或网络下载；签名在仓库外保存。自行生成的密钥不能覆盖安装其他签名版本。自有签名和 Android Studio 构建见 [构建说明](docs/BUILDING.md)。
 
 ## 测试与参与
 

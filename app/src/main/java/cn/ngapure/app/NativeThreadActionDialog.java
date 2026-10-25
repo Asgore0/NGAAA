@@ -41,8 +41,15 @@ public final class NativeThreadActionDialog {
         accent = palette.accent; soft = palette.soft; error = palette.error;
     }
 
-    /** Direction is +1 (like) or -1 (dislike); server confirms whether this adds or removes it. */
+    public interface ReactionListener { void onConfirmed(NativeThreadActions.Reaction result); }
+
+    /** Compatibility for callers that only need an invalidation notification. */
     public void showReaction(String tid, String pid, int direction, Runnable changed) {
+        showReaction(tid, pid, direction, result -> { if (changed != null) changed.run(); });
+    }
+
+    /** Direction is +1 (like) or -1 (dislike); server confirms whether this adds or removes it. */
+    public void showReaction(String tid, String pid, int direction, ReactionListener listener) {
         if (direction != 1 && direction != -1) throw new IllegalArgumentException("direction");
         final NativeThreadActions.ReactionDraft draft;
         try { draft = actions.prepareReaction(tid, pid, direction); }
@@ -51,15 +58,75 @@ public final class NativeThreadActionDialog {
         LinearLayout content = column();
         TextView description = text("再次选择同一方向会撤销已有操作，最终状态以 NGA 返回结果为准。", 15, muted); content.addView(description);
         TextView status = status(content);
+        TextView recovery = text("核对后重新操作", 15, accent); recovery.setTag("reaction-recovery");
+        recovery.setMinHeight(dp(48)); recovery.setPadding(0, dp(14), 0, dp(8));
+        recovery.setVisibility(View.GONE); content.addView(recovery);
         NativeGlassDialog dialog = replace(new NativeGlassDialog.Builder(activity, dark)
                 .setTitle(up ? "点赞这条内容" : "点踩这条内容").setView(content)
                 .setNegativeButton("取消", null).setPositiveButton("确认" + name, null).create());
         dialog.setOnShowListener(ignored -> dialog.getButton(NativeGlassDialog.BUTTON_POSITIVE).setOnClickListener(v ->
-                submit(dialog, status, () -> {
-                    NativeThreadActions.Reaction result = actions.recommend(draft);
-                    String state = result.selected == 1 ? "当前已点赞" : result.selected == -1 ? "当前已点踩" : "当前未点赞或点踩";
-                    return result.message + "\n" + state;
-                }, changed)));
+                submitReaction(dialog, status, recovery, draft, listener)));
+        recovery.setOnClickListener(v -> showReactionRecovery(draft, listener));
+        dialog.show();
+    }
+
+    private void submitReaction(NativeGlassDialog dialog, TextView status, TextView recovery,
+                                NativeThreadActions.ReactionDraft draft, ReactionListener listener) {
+        if (!current(dialog)) return;
+        Button positive = dialog.getButton(NativeGlassDialog.BUTTON_POSITIVE);
+        if (positive == null || !positive.isEnabled()) return;
+        Button negative = dialog.getButton(NativeGlassDialog.BUTTON_NEGATIVE);
+        positive.setEnabled(false); if (negative != null) negative.setEnabled(false);
+        recovery.setVisibility(View.GONE); dialog.setCancelable(false);
+        status.setTextColor(muted); status.setText("正在提交，请稍候…");
+        worker.execute(() -> {
+            try {
+                NativeThreadActions.Reaction result = actions.recommend(draft);
+                activity.runOnUiThread(() -> {
+                    if (!current(dialog)) return;
+                    String state = !result.selectionKnown ? "服务器已确认操作，请刷新核对当前状态"
+                            : result.selected == 1 ? "当前已点赞" : result.selected == -1 ? "当前已点踩" : "当前未点赞或点踩";
+                    showMessage("操作已确认", result.message + "\n" + state, null);
+                    if (listener != null) listener.onConfirmed(result);
+                });
+            } catch (NativeThreadActions.ActionException failure) {
+                activity.runOnUiThread(() -> {
+                    if (!current(dialog)) return;
+                    dialog.setCancelable(true); if (negative != null) negative.setEnabled(true);
+                    positive.setEnabled(!failure.uncertain && failure.kind != NativeThreadActions.Kind.SESSION_CHANGED);
+                    status.setTextColor(error); status.setText(failure.getMessage());
+                    recovery.setVisibility(failure.uncertain ? View.VISIBLE : View.GONE);
+                });
+            }
+        });
+    }
+
+    /** Clearing an uncertain local guard is separate from confirming a new server toggle. */
+    private void showReactionRecovery(NativeThreadActions.ReactionDraft draft, ReactionListener listener) {
+        LinearLayout content = column();
+        content.addView(text("上次结果未确认，请先关闭面板核对帖子。确认已核对后，仅解除本机的重复提交保护；不会发送点赞或点踩。下一步仍需单独确认。", 15, muted));
+        TextView status = status(content);
+        NativeGlassDialog dialog = replace(new NativeGlassDialog.Builder(activity, dark)
+                .setTitle("核对上次操作").setView(content).setNegativeButton("返回核对", null)
+                .setPositiveButton("已核对，重新操作", null).create());
+        dialog.setOnShowListener(ignored -> dialog.getButton(NativeGlassDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+            Button positive = dialog.getButton(NativeGlassDialog.BUTTON_POSITIVE);
+            if (!current(dialog) || !positive.isEnabled()) return;
+            positive.setEnabled(false); dialog.setCancelable(false);
+            dialog.getButton(NativeGlassDialog.BUTTON_NEGATIVE).setEnabled(false);
+            worker.execute(() -> {
+                try {
+                    actions.resolveReactionUncertainty(draft);
+                    activity.runOnUiThread(() -> { if (current(dialog)) showReaction(draft.tid, draft.pid, draft.direction, listener); });
+                } catch (NativeThreadActions.ActionException failure) {
+                    activity.runOnUiThread(() -> {
+                        if (!current(dialog)) return;
+                        dialog.setCancelable(true); dialog.getButton(NativeGlassDialog.BUTTON_NEGATIVE).setEnabled(true);
+                        status.setTextColor(error); status.setText(failure.getMessage());
+                    });
+                }
+            });
+        }));
         dialog.show();
     }
 

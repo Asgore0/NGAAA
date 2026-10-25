@@ -40,6 +40,7 @@ javac --release 8 -Xlint:all -Werror -encoding UTF-8 -cp "$TEST_WORK_DIR/classes
 # Compile the real private-message view and rich-text/media components; no test substitutes.
 javac --release 8 -Xlint:all -Werror -encoding UTF-8 -cp "$ANDROID_JAR:$TEST_WORK_DIR/classes:$JSON_JAR" \
   -d "$TEST_WORK_DIR/classes" app/src/main/java/cn/ngapure/app/PostRenderer.java \
+  app/src/main/java/cn/ngapure/app/AppPalette.java app/src/main/java/cn/ngapure/app/NativeThreadActions.java \
   app/src/main/java/cn/ngapure/app/NativeLinkTarget.java app/src/main/java/cn/ngapure/app/BrowserLinks.java \
   app/src/main/java/cn/ngapure/app/NativeGlassDialog.java app/src/main/java/cn/ngapure/app/GlassPanel.java app/src/main/java/cn/ngapure/app/IconView.java app/src/main/java/cn/ngapure/app/Motion.java \
   app/src/main/java/cn/ngapure/app/NativeAvatarResolver.java app/src/main/java/cn/ngapure/app/NativeImages.java app/src/main/java/cn/ngapure/app/NativeMediaCache.java app/src/main/java/cn/ngapure/app/FlowTextWhitespace.java app/src/main/java/cn/ngapure/app/NativeRichText.java app/src/main/java/cn/ngapure/app/AvatarView.java \
