@@ -12,6 +12,7 @@ bash scripts/test.sh renderer
 bash scripts/test.sh api
 bash scripts/test.sh checkin_service
 bash scripts/test.sh startup_tasks
+bash scripts/test.sh direct_reactions
 ```
 
 统一入口设置 `JAVA_HOME`、SDK 路径、隔离的 `TEST_WORK_DIR` 和测试 JSON 库路径，避免依赖原开发工作区。测试 JSON 库为 org.json 20240303，SHA-256 固定为 `3cf6cd6892e32e2b4c1c39e0f52f5248a2f5b37646fdfbb79a66b46b618414ed`；首次缺失会从 Maven Central 下载到 `.build/test-deps/`，不进入应用运行时。
@@ -34,6 +35,8 @@ bash scripts/with-env.sh bash tests/session_reads_device/build.sh
 ```
 
 示例依赖这些变量已经正确设置。部分历史 helper 会访问已安装客户端或真实服务；`tests/device`、`tests/auto_device` 等不能当作无网络合成测试使用。不要把个人主设备或日常账号作为默认测试目标，不提交设备 dumps、Cookie、二维码、真实账号 fixture 或私信记录。
+
+直接赞踩的顺序测试见 `tests/direct_reactions/README.md`；完整阅读页的无网络 Android 夹具见 `tests/reaction_reader_device/README.md`，覆盖直接点按、撤销、行内错误以及确认和计数回调的先后交错。
 
 ## 性能结论
 

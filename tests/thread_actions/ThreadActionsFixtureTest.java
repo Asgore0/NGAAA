@@ -66,6 +66,7 @@ public final class ThreadActionsFixtureTest {
         check(request.url.toString().equals("https://bbs.nga.cn/nuke.php") && request.method.equals("POST"), "Official reaction endpoint");
         Map<String, String> body = parameters(request);
         check(body.get("__lib").equals("topic_recommend") && body.get("__act").equals("add") && body.get("value").equals("1") && body.get("pid").equals("0"), "Official reaction fields");
+        check("8".equals(body.get("__output")), "Reaction requests explicit native JSON rather than the default HTML wrapper");
         check(request.headers.get("Cookie").equals(s.testCookie) && request.headers.get("Origin").equals("https://bbs.nga.cn"), "Frozen official session headers");
         NativeThreadActions.Reaction removed = a.recommend("123", "0", 1);
         check(removed.selected == 0 && removed.delta == -1, "Repeat reaction uses official toggle response");
@@ -99,12 +100,42 @@ public final class ThreadActionsFixtureTest {
         String[] malformed = {valid + "<script>alert(1)</script>", valid.replace("</script>", ";alert(1)</script>"),
                 valid.replace("<body>", "<body><script>other()</script>"), valid.replace("window.script_muti_get_var_store=", "other="),
                 valid.replace("<script>", "<script src='https://example.invalid/x.js'>"), "<html>安全验证</html>",
-                "{\"data\":[\"success\",\"\",4]}", "{\"data\":[\"success\",1,\"\"]}", "{\"data\":[{},1,4]}",
+                "{\"data\":[\"success\",\"invalid\",4]}", "{\"data\":[\"success\",1,\"\"]}", "{\"data\":[{},1,4]}",
                 "{\"data\":[\"success\",1,4]};/*error fill content*/alert(1)/* padding */"};
         for (String raw : malformed) {
             Journal journal = new Journal(); Transport transport = new Transport().gb(raw);
             error(Kind.OUTCOME_UNKNOWN, () -> api(new NgaStore(), transport, journal).recommend("102", "0", 1));
             check(journal.pending.size() == 1 && transport.requests.size() == 1, "Unrecognized scripts or malformed confirmations remain guarded");
+        }
+    }
+    private static void repeatedNativeToggles() throws Exception {
+        for (String pid : new String[]{"0", "991"}) for (int direction : new int[]{1, -1}) {
+            int addFlag = direction > 0 ? 4 : 8, removeFlag = direction > 0 ? 1 : 2;
+            for (String missing : new String[]{"absent", "null", "empty"}) {
+                JSONObject removal = new JSONObject().put("0", "").put("2", removeFlag);
+                if (missing.equals("null")) removal.put("1", JSONObject.NULL);
+                if (missing.equals("empty")) removal.put("1", "");
+                String added = new JSONObject().put("data", new org.json.JSONArray().put("确认").put(direction).put(addFlag)).toString();
+                Transport transport = new Transport().gb(added).gb(new JSONObject().put("data", removal).toString()).gb(added);
+                Journal journal = new Journal(); NativeThreadActions api = api(new NgaStore(), transport, journal);
+                NativeThreadActions.Reaction first = api.recommend("990", pid, direction);
+                NativeThreadActions.Reaction removed = api.recommend("990", pid, direction);
+                NativeThreadActions.Reaction again = api.recommend("990", pid, direction);
+                check(first.selectionKnown && first.deltaKnown && first.selected == direction, "First direct tap confirms the actual server direction");
+                check(removed.selectionKnown && removed.selected == 0 && !removed.deltaKnown && removed.delta == 0,
+                        "Authoritative removal flags work without a net delta; placeholder is explicitly unknown");
+                check(again.selectionKnown && again.selected == direction && journal.pending.isEmpty(), "Add-remove-add cycle never leaves a false uncertain guard");
+                for (NativeThreadActions.Request request : transport.requests) {
+                    Map<String, String> sent = parameters(request);
+                    check("8".equals(sent.get("__output")) && String.valueOf(direction).equals(sent.get("value")) && pid.equals(sent.get("pid")),
+                            "Every tap, including cancellation, uses the official same-direction toggle and JSON mode");
+                }
+            }
+        }
+        for (String raw : new String[]{"{\"data\":[\"撤销\"]}", "{\"data\":{\"0\":\"撤销\",\"2\":0}}", "{\"data\":{\"0\":\"撤销\",\"2\":12}}"}) {
+            Journal journal = new Journal(); NativeThreadActions api = api(new NgaStore(), new Transport().json(raw), journal);
+            error(Kind.OUTCOME_UNKNOWN, () -> api.recommend("995", "0", 1));
+            check(journal.pending.size() == 1, "Text or absent/conflicting flags alone cannot invent a successful cancellation");
         }
     }
     private static void explicitReactionRecovery() throws Exception {
@@ -296,7 +327,7 @@ public final class ThreadActionsFixtureTest {
         current[0].recommend("8", "0", 1); check(duplicate.requests.size() == 1 && guard.pending.isEmpty(), "Duplicate in-flight tap cannot dispatch another mutation");
     }
     public static void main(String[] args) throws Exception {
-        reactions(); legacyReactionEnvelopes(); explicitReactionRecovery(); reactionConfirmationScope(); unknownResults(); errorsAndScope(); reports(); polls(); groupedBetAndScope(); writeGuardsAndDuplicateTap();
+        reactions(); legacyReactionEnvelopes(); repeatedNativeToggles(); explicitReactionRecovery(); reactionConfirmationScope(); unknownResults(); errorsAndScope(); reports(); polls(); groupedBetAndScope(); writeGuardsAndDuplicateTap();
         System.out.println("Native thread actions: " + checks + " offline assertions passed; no sockets opened, no real reactions/reports/votes submitted.");
     }
 }

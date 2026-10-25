@@ -59,12 +59,15 @@ public final class NativeThreadActions {
         public final String message;
         /** Server-confirmed net recommendation change; never treated as a positive-vote count. */
         public final int delta;
+        /** Some acknowledgements omit the delta; zero is then only an unused placeholder. */
+        public final boolean deltaKnown;
         /** +1 up, -1 down, 0 neither. Derived only from the official response flags. */
         public final int selected;
         /** Zero flags leave the previous selection unchanged, as in the official client. */
         public final boolean selectionKnown;
-        private Reaction(String text, int delta, int flags) {
+        private Reaction(String text, int delta, boolean deltaKnown, int flags) {
             message = text; this.delta = delta; selected = (flags & 4) != 0 ? 1 : (flags & 8) != 0 ? -1 : 0;
+            this.deltaKnown = deltaKnown;
             selectionKnown = flags != 0;
         }
     }
@@ -174,7 +177,7 @@ public final class NativeThreadActions {
         this.sessions = sessions; this.transport = transport; this.journal = journal;
     }
 
-    /** Local validation only. Opening a confirmation sheet never sends a reaction. */
+    /** Local validation only, binding one explicit tap to its current account and route. */
     public ReactionDraft prepareReaction(String tid, String pid, int direction) throws ActionException {
         tid = id(tid, false); pid = id(pid, true);
         if (direction != 1 && direction != -1) throw fail(Kind.VALIDATION, "请选择点赞或点踩");
@@ -199,15 +202,15 @@ public final class NativeThreadActions {
         }
     }
     private String reactionKey(ReactionDraft draft) throws ActionException {
-        if (draft == null || draft.owner != this) throw fail(Kind.VALIDATION, "请重新打开点赞或点踩面板");
+        if (draft == null || draft.owner != this) throw fail(Kind.VALIDATION, "请重新点击点赞或点踩");
         Session s = session(true); verifyFingerprint(s, draft.fingerprint);
         return key(s, "reaction", draft.tid, draft.pid);
     }
     /** Clicking the same direction again invokes the official toggle, including removing a previous reaction. */
     public Reaction recommend(ReactionDraft draft) throws ActionException {
-        if (draft == null || draft.owner != this) throw fail(Kind.VALIDATION, "请重新打开点赞或点踩面板");
+        if (draft == null || draft.owner != this) throw fail(Kind.VALIDATION, "请重新点击点赞或点踩");
         synchronized (draft) {
-            if (draft.submitted) throw fail(Kind.VALIDATION, "请重新打开点赞或点踩面板");
+            if (draft.submitted) throw fail(Kind.VALIDATION, "请重新点击点赞或点踩");
             if (draft.inFlight) throw fail(Kind.BUSY, "操作正在提交，请稍候");
             draft.inFlight = true;
         }
@@ -217,19 +220,26 @@ public final class NativeThreadActions {
     private Reaction sendReaction(ReactionDraft draft) throws ActionException {
         Session s = session(true); verifyFingerprint(s, draft.fingerprint);
         Map<String, String> args = api("topic_recommend", "add");
+        // Explicit native JSON output avoids raw=3's default HTML/JavaScript transport wrapper.
+        args.put("__output", "8");
         args.put("tid", draft.tid); args.put("pid", draft.pid); args.put("value", String.valueOf(draft.direction));
         String key = key(s, "reaction", draft.tid, draft.pid); begin(key);
         try {
             JSONObject root = exchange(s, "/nuke.php", args, true);
-            int delta = exactInt(at(root.opt("data"), "1"), -100000, 100000, "推荐值变化");
             int flags = exactInt(at(root.opt("data"), "2"), 0, 15, "点赞状态");
             if ((flags & 12) == 12) throw unknown("服务器返回了冲突的点赞状态，请先刷新帖子核对", null);
+            Object rawDelta = at(root.opt("data"), "1");
+            boolean deltaKnown = rawDelta != null && rawDelta != JSONObject.NULL && !"".equals(rawDelta);
+            if (!deltaKnown && flags == 0) throw unknown("服务器未返回可核验的操作状态，请先核对记录", null);
+            // The official postScoreAdd uses data[1]|0. State flags confirm a toggle independently
+            // of its optional net delta, which must never be used to invent like/dislike totals.
+            int delta = deltaKnown ? exactInt(rawDelta, -100000, 100000, "推荐值变化") : 0;
             Object rawMessage = at(root.opt("data"), "0");
             if (rawMessage != null && rawMessage != JSONObject.NULL && !(rawMessage instanceof String))
                 throw unknown("服务器返回的操作提示格式无效，请先核对记录", null);
             String message = rawMessage instanceof String ? clean((String) rawMessage) : "";
             if (message.isEmpty()) message = (flags & 4) != 0 ? "已点赞" : (flags & 8) != 0 ? "已点踩" : flags != 0 ? "已撤销操作" : "操作已确认";
-            verify(s); finish(key); synchronized (draft) { draft.submitted = true; } return new Reaction(message, delta, flags);
+            verify(s); finish(key); synchronized (draft) { draft.submitted = true; } return new Reaction(message, delta, deltaKnown, flags);
         } catch (ActionException e) { rejected(key, e); throw e; }
         finally { release(key); }
     }

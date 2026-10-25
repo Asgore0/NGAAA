@@ -13,41 +13,63 @@ import android.widget.TextView;
 
 /** Two independent, native reaction targets. Binding and count refreshes never send a request. */
 public final class NativeVoteBar extends LinearLayout {
-    private final TextView like, dislike;
+    private final TextView like, dislike, status, recovery;
     private final boolean dark;
     private final AppPalette palette;
     private VoteMetrics metrics = new VoteMetrics();
     private int selectedDirection;
+    private boolean directBusy, directUncertain;
+    private Runnable onLike, onDislike;
 
     public NativeVoteBar(Context context, boolean dark) {
         super(context);
         this.dark = dark; palette = AppPalette.of(dark);
-        setOrientation(HORIZONTAL); setGravity(Gravity.CENTER_VERTICAL);
+        setOrientation(VERTICAL); setGravity(Gravity.CENTER_VERTICAL);
         setMinimumHeight(dp(48)); setClipChildren(false); setClipToPadding(false);
         setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO);
         like = target("vote-like"); dislike = target("vote-dislike");
         LayoutParams up = new LayoutParams(0, -2, 1); up.setMarginEnd(dp(4));
         LayoutParams down = new LayoutParams(0, -2, 1); down.setMarginStart(dp(4));
-        addView(like, up); addView(dislike, down); counts(null);
+        LinearLayout choices = new LinearLayout(context); choices.setOrientation(HORIZONTAL);
+        choices.addView(like, up); choices.addView(dislike, down); addView(choices, new LayoutParams(-1, -2));
+        status = new TextView(context); status.setTag("vote-status"); status.setTextSize(11);
+        status.setTextColor(palette.muted); status.setPadding(dp(4), 0, dp(4), dp(4));
+        status.setMaxLines(4); status.setEllipsize(TextUtils.TruncateAt.END);
+        status.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_POLITE); status.setVisibility(GONE);
+        addView(status, new LayoutParams(-1, -2));
+        recovery = target("vote-recovery"); recovery.setText("已核对，解除保护"); recovery.setSingleLine(false);
+        recovery.setVisibility(GONE); addView(recovery, new LayoutParams(-1, -2)); counts(null);
     }
 
-    /** Callers own route/account guards and the explicit confirmation sheet. */
+    /** Callers own route/account guards. A direct reaction never needs a confirmation sheet. */
     public void bind(VoteMetrics value, Runnable onLike, Runnable onDislike) {
         bind(value, onLike, onDislike, 0);
     }
     public void bind(VoteMetrics value, Runnable onLike, Runnable onDislike, int confirmedDirection) {
         counts(value); selectedDirection(confirmedDirection);
-        like.setOnClickListener(onLike == null ? null : view -> onLike.run());
-        dislike.setOnClickListener(onDislike == null ? null : view -> onDislike.run());
-        like.setEnabled(onLike != null); dislike.setEnabled(onDislike != null);
-        like.setAlpha(onLike == null ? .6f : 1f); dislike.setAlpha(onDislike == null ? .6f : 1f);
+        this.onLike = onLike; this.onDislike = onDislike;
+        like.setOnClickListener(view -> { if (!directBusy && !directUncertain && this.onLike != null) this.onLike.run(); });
+        dislike.setOnClickListener(view -> { if (!directBusy && !directUncertain && this.onDislike != null) this.onDislike.run(); });
+        directState(false, false, "", null);
     }
 
     /** Apply the actual acknowledgement. Net deltas cannot give separate totals. */
     public void confirmedReaction(NativeThreadActions.Reaction result) {
         if (result == null) return;
-        counts(null);
-        if (result.selectionKnown) selectedDirection(result.selected);
+        confirmedSelection(result.selectionKnown, result.selected);
+    }
+    public void confirmedSelection(boolean known, int direction) { counts(null); if (known) selectedDirection(direction); }
+
+    /** Both directions share the same per-floor gate, including programmatic/accessibility clicks. */
+    public void directState(boolean busy, boolean uncertain, String message, Runnable resolveOnly) {
+        directBusy = busy; directUncertain = uncertain;
+        like.setEnabled(onLike != null && !busy && !uncertain); dislike.setEnabled(onDislike != null && !busy && !uncertain);
+        like.setAlpha(like.isEnabled() ? 1f : .55f); dislike.setAlpha(dislike.isEnabled() ? 1f : .55f);
+        String value = message == null ? "" : message;
+        if (uncertain) value = (value.isEmpty() ? "上次结果未确认" : value) + "\n请先核对帖子；不会自动重试。";
+        status.setText(value); status.setVisibility(value.isEmpty() ? GONE : VISIBLE);
+        recovery.setVisibility(uncertain ? VISIBLE : GONE); recovery.setEnabled(!busy && resolveOnly != null);
+        recovery.setOnClickListener(view -> { if (!directBusy && directUncertain && resolveOnly != null) resolveOnly.run(); });
     }
 
     /** Uses exact support/oppose totals only. A recommendation delta cannot update these totals. */
@@ -68,8 +90,8 @@ public final class NativeVoteBar extends LinearLayout {
     }
 
     private void descriptions() {
-        like.setContentDescription(metrics.likesLabel() + (selectedDirection == 1 ? "，已点赞，再次确认可撤销" : "，点按确认点赞或撤销"));
-        dislike.setContentDescription(metrics.dislikesLabel() + (selectedDirection == -1 ? "，已点踩，再次确认可撤销" : "，点按确认点踩或撤销"));
+        like.setContentDescription(metrics.likesLabel() + (selectedDirection == 1 ? "，已点赞，再次点按可撤销" : "，点按点赞或撤销"));
+        dislike.setContentDescription(metrics.dislikesLabel() + (selectedDirection == -1 ? "，已点踩，再次点按可撤销" : "，点按点踩或撤销"));
     }
 
     private TextView target(String tag) {

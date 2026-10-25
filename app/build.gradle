@@ -11,8 +11,8 @@ android {
         applicationId 'cn.ngapure.app'
         minSdk 26
         targetSdk 35
-        versionCode 48
-        versionName '0.20.14'
+        versionCode 49
+        versionName '0.20.15'
     }
 
     compileOptions {
